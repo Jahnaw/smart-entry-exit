@@ -4,6 +4,7 @@ import {
   Route,
   Routes,
 } from "react-router-dom";
+import GateQR from "./pages/GateQR";
 
 import { AuthProvider } from "./context/AuthContext";
 
@@ -46,6 +47,11 @@ const App = () => {
               </ProtectedRoute>
             }
           />
+
+          <Route
+  path="/gate-qr"
+  element={<GateQR />}
+/>
         </Routes>
       </AuthProvider>
     </BrowserRouter>

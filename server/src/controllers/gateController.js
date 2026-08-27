@@ -85,7 +85,42 @@ const getGateByQrToken = async (req, res) => {
   }
 };
 
+const getGateQrCode = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const gate = await Gate.findById(id);
+
+    if (!gate) {
+      return res.status(404).json({
+        success: false,
+        message: "Gate not found",
+      });
+    }
+
+    const qrCode = await generateQrCode(
+      gate.qrToken
+    );
+
+    res.status(200).json({
+      success: true,
+      qrCode,
+    });
+  } catch (error) {
+    console.error(
+      "Generate gate QR error:",
+      error
+    );
+
+    res.status(500).json({
+      success: false,
+      message: "Unable to generate gate QR",
+    });
+  }
+};
+
 module.exports = {
   createGate,
   getGateByQrToken,
+  getGateQrCode,
 };
