@@ -84,3 +84,24 @@ export const registerDevice = async (
 
   return data;
 };
+
+export const getGateByQrToken = async (
+  qrToken
+) => {
+  const response = await fetch(
+    `${API_BASE_URL}/gates/qr/${encodeURIComponent(
+      qrToken
+    )}`
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(
+      data.message ||
+        "Unable to identify gate"
+    );
+  }
+
+  return data;
+};

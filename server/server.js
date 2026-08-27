@@ -8,6 +8,7 @@ const testRoutes = require("./src/routes/testRoutes");
 const authRoutes = require("./src/routes/authRoutes");
 const studentRoutes = require("./src/routes/studentRoutes");
 const deviceRoutes = require("./src/routes/deviceRoutes");
+const gateRoutes = require("./src/routes/gateRoutes");
 
 const app = express();
 
@@ -32,6 +33,7 @@ app.use("/api/test", testRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/student", studentRoutes);
 app.use("/api/device", deviceRoutes);
+app.use("/api/gates", gateRoutes);
 
 // Start server
 app.listen(PORT, () => {
