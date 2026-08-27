@@ -105,3 +105,106 @@ export const getGateByQrToken = async (
 
   return data;
 };
+
+export const verifyLocation = async ({
+  token,
+  deviceToken,
+  qrToken,
+  latitude,
+  longitude,
+  accuracy,
+}) => {
+  const response = await fetch(
+    `${API_BASE_URL}/geofence/verify`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+        "X-Device-Token": deviceToken,
+      },
+      body: JSON.stringify({
+        qrToken,
+        latitude,
+        longitude,
+        accuracy,
+      }),
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(
+      data.message ||
+        "Location verification failed"
+    );
+  }
+
+  return data;
+};
+
+export const markAttendance = async ({
+  token,
+  deviceToken,
+  qrToken,
+  latitude,
+  longitude,
+  accuracy,
+}) => {
+  const response = await fetch(
+    `${API_BASE_URL}/attendance/mark`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+        "X-Device-Token": deviceToken,
+      },
+      body: JSON.stringify({
+        qrToken,
+        latitude,
+        longitude,
+        accuracy,
+      }),
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(
+      data.message ||
+        "Unable to mark attendance"
+    );
+  }
+
+  return data;
+};
+
+export const getAttendanceHistory = async ({
+  token,
+  deviceToken,
+}) => {
+  const response = await fetch(
+    `${API_BASE_URL}/attendance/history`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "X-Device-Token": deviceToken,
+      },
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(
+      data.message ||
+        "Unable to fetch attendance history"
+    );
+  }
+
+  return data;
+};

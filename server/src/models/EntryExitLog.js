@@ -6,18 +6,26 @@ const entryExitLogSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Student",
       required: true,
+      index: true,
     },
 
     gate: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Gate",
       required: true,
+      index: true,
     },
 
     action: {
       type: String,
       enum: ["ENTRY", "EXIT"],
       required: true,
+    },
+
+    timestamp: {
+      type: Date,
+      default: Date.now,
+      index: true,
     },
 
     latitude: {
@@ -30,26 +38,28 @@ const entryExitLogSchema = new mongoose.Schema(
       required: true,
     },
 
-    deviceId: {
-      type: String,
+    accuracy: {
+      type: Number,
       required: true,
     },
 
-    timestamp: {
-      type: Date,
-      default: Date.now,
+    distanceFromGate: {
+      type: Number,
+      required: true,
     },
+
+    device: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Device",
+      required: true,
+    },
+  },
+  {
+    timestamps: true,
   }
 );
 
-entryExitLogSchema.index({
-  student: 1,
-  timestamp: -1,
-});
-
-entryExitLogSchema.index({
-  gate: 1,
-  timestamp: -1,
-});
-
-module.exports = mongoose.model("EntryExitLog", entryExitLogSchema);
+module.exports = mongoose.model(
+  "EntryExitLog",
+  entryExitLogSchema
+);
