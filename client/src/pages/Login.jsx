@@ -6,7 +6,7 @@ import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { login, saveDeviceToken } = useAuth();
+  const { login, deviceToken, saveDeviceToken, logout } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -15,34 +15,42 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (event) => {
-    event.preventDefault();
+  event.preventDefault();
 
-    setError("");
-    setLoading(true);
+  setError("");
+  setLoading(true);
+
+  try {
+    const data = await loginStudent({
+      email,
+      password,
+    });
+
+    login(data);
 
     try {
-      const data = await loginStudent({
-        email,
-        password,
-      });
+      const deviceData = await registerDevice(
+        data.token,
+        deviceToken
+      );
 
-      login(data);
-
-      try {
-        const deviceData = await registerDevice(data.token);
-
-        saveDeviceToken(deviceData.deviceToken);
-      } catch (deviceError) {
-        console.error("Device registration:", deviceError.message);
+      if (deviceData.deviceToken) {
+        saveDeviceToken(
+          deviceData.deviceToken
+        );
       }
-
-      navigate("/dashboard");
-    } catch (error) {
-      setError(error.message);
-    } finally {
-      setLoading(false);
+    } catch (deviceError) {
+      logout();
+      throw deviceError;
     }
-  };
+
+    navigate("/dashboard");
+  } catch (error) {
+    setError(error.message);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="auth-page">

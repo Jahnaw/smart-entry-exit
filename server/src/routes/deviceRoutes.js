@@ -3,7 +3,7 @@ const express = require("express");
 const authenticateStudent = require("../middleware/authMiddleware");
 
 const {
-  registerDevice,
+  registerOrVerifyDevice,
 } = require("../controllers/deviceController");
 
 const router = express.Router();
@@ -11,7 +11,7 @@ const router = express.Router();
 router.post(
   "/register",
   authenticateStudent,
-  registerDevice
+  registerOrVerifyDevice
 );
 
 module.exports = router;

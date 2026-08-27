@@ -53,14 +53,23 @@ export const getStudentProfile = async (token) => {
   return data;
 };
 
-export const registerDevice = async (token) => {
+export const registerDevice = async (
+  token,
+  deviceToken
+) => {
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+
+  if (deviceToken) {
+    headers["X-Device-Token"] = deviceToken;
+  }
+
   const response = await fetch(
     `${API_BASE_URL}/device/register`,
     {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers,
     }
   );
 
@@ -68,7 +77,8 @@ export const registerDevice = async (token) => {
 
   if (!response.ok) {
     throw new Error(
-      data.message || "Device registration failed"
+      data.message ||
+        "Device verification failed"
     );
   }
 
