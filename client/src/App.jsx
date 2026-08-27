@@ -1,28 +1,55 @@
-import { useEffect, useState } from "react";
+import {
+  BrowserRouter,
+  Navigate,
+  Route,
+  Routes,
+} from "react-router-dom";
 
-function App() {
-  const [serverStatus, setServerStatus] = useState("Checking...");
+import { AuthProvider } from "./context/AuthContext";
 
-  useEffect(() => {
-    fetch("http://localhost:5000/api/health")
-      .then((response) => response.json())
-      .then((data) => {
-        setServerStatus(data.message);
-      })
-      .catch(() => {
-        setServerStatus("Backend is not reachable");
-      });
-  }, []);
+import ProtectedRoute from "./components/ProtectedRoute";
 
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import Dashboard from "./pages/Dashboard";
+
+const App = () => {
   return (
-    <div className="app">
-      <h1>Smart Entry-Exit</h1>
+    <BrowserRouter>
+      <AuthProvider>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <Navigate
+                to="/dashboard"
+                replace
+              />
+            }
+          />
 
-      <p>QR-Based Entry/Exit Management System</p>
+          <Route
+            path="/login"
+            element={<Login />}
+          />
 
-      <p>Backend Status: {serverStatus}</p>
-    </div>
+          <Route
+            path="/signup"
+            element={<Signup />}
+          />
+
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </AuthProvider>
+    </BrowserRouter>
   );
-}
+};
 
 export default App;

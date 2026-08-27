@@ -7,6 +7,7 @@ const connectDB = require("./src/config/db");
 const testRoutes = require("./src/routes/testRoutes");
 const authRoutes = require("./src/routes/authRoutes");
 const studentRoutes = require("./src/routes/studentRoutes");
+const deviceRoutes = require("./src/routes/deviceRoutes");
 
 const app = express();
 
@@ -30,6 +31,7 @@ app.get("/api/health", (req, res) => {
 app.use("/api/test", testRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/student", studentRoutes);
+app.use("/api/device", deviceRoutes);
 
 // Start server
 app.listen(PORT, () => {

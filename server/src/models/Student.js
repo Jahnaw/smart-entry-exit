@@ -33,11 +33,6 @@ const studentSchema = new mongoose.Schema(
       trim: true,
     },
 
-    deviceId: {
-      type: String,
-      default: null,
-    },
-
     status: {
       type: String,
       enum: ["INSIDE", "OUTSIDE"],
