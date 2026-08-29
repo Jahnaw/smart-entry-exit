@@ -8,6 +8,21 @@ const gateSchema = new mongoose.Schema(
       trim: true,
     },
 
+    type: {
+      type: String,
+      enum: ["MAIN", "HOSTEL"],
+      required: true,
+      default: "HOSTEL",
+    },
+
+    hostelId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Hostel",
+      required: function () {
+        return this.type === "HOSTEL";
+      },
+    },
+
     latitude: {
       type: Number,
       required: true,

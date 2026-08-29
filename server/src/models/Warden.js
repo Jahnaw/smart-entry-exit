@@ -1,17 +1,10 @@
 const mongoose = require("mongoose");
 
-const studentSchema = new mongoose.Schema(
+const wardenSchema = new mongoose.Schema(
   {
     name: {
       type: String,
       required: true,
-      trim: true,
-    },
-
-    rollNumber: {
-      type: String,
-      required: true,
-      unique: true,
       trim: true,
     },
 
@@ -36,26 +29,18 @@ const studentSchema = new mongoose.Schema(
     hostelId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Hostel",
-      required: function () {
-        return this.role !== "ADMIN";
-      },
-    },
-
-    status: {
-      type: String,
-      enum: ["INSIDE", "OUTSIDE"],
-      default: "OUTSIDE",
+      required: true,
     },
 
     role: {
       type: String,
-      enum: [
-        "STUDENT",
-        "ADMIN",
-        "WARDEN",
-        "GUARD",
-      ],
-      default: "STUDENT",
+      default: "WARDEN",
+      enum: ["WARDEN"],
+    },
+
+    active: {
+      type: Boolean,
+      default: true,
     },
   },
   {
@@ -64,6 +49,6 @@ const studentSchema = new mongoose.Schema(
 );
 
 module.exports = mongoose.model(
-  "Student",
-  studentSchema
+  "Warden",
+  wardenSchema
 );

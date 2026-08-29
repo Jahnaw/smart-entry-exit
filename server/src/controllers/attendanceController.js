@@ -2,6 +2,7 @@ const Gate = require("../models/Gate");
 const Student = require("../models/Student");
 const Device = require("../models/Device");
 const EntryExitLog = require("../models/EntryExitLog");
+const Warden = require("../models/Warden");
 
 const calculateDistance = require("../utils/distance");
 
@@ -48,12 +49,7 @@ const markAttendance = async (req, res) => {
     }
 
     /*
-     * 3. Get gate using the QR token
-     *
-     * IMPORTANT:
-     * Gate coordinates come from MongoDB.
-     * We do NOT trust coordinates sent by frontend
-     * for the gate.
+     * 3. Get gate using QR token
      */
     const gate = await Gate.findOne({
       qrToken,
@@ -78,10 +74,7 @@ const markAttendance = async (req, res) => {
     );
 
     /*
-     * 5. Verify geofence again
-     *
-     * We intentionally verify this again here
-     * instead of trusting a previous frontend check.
+     * 5. Verify geofence
      */
     if (distance > gate.radius) {
       return res.status(403).json({
@@ -105,7 +98,7 @@ const markAttendance = async (req, res) => {
     }
 
     /*
-     * 7. Decide ENTRY or EXIT from current status
+     * 7. Decide ENTRY or EXIT
      */
     const action =
       student.status === "OUTSIDE"
@@ -153,7 +146,7 @@ const markAttendance = async (req, res) => {
       });
 
     /*
-     * 10. Update current student status
+     * 10. Update student status
      */
     student.status =
       action === "ENTRY"
@@ -200,14 +193,15 @@ const getAttendanceHistory = async (req, res) => {
   try {
     const studentId = req.studentId;
 
-    const logs = await EntryExitLog.find({
-      student: studentId,
-    })
-      .populate("gate", "name")
-      .sort({
-        timestamp: -1,
+    const logs =
+      await EntryExitLog.find({
+        student: studentId,
       })
-      .limit(50);
+        .populate("gate", "name")
+        .sort({
+          timestamp: -1,
+        })
+        .limit(50);
 
     return res.status(200).json({
       success: true,
@@ -236,7 +230,194 @@ const getAttendanceHistory = async (req, res) => {
   }
 };
 
+const getAllAttendance = async (req, res) => {
+  try {
+    const logs =
+      await EntryExitLog.find()
+        .populate(
+          "student",
+          "name rollNumber email"
+        )
+        .populate(
+          "gate",
+          "name"
+        )
+        .sort({
+          timestamp: -1,
+        })
+        .limit(100);
+
+    return res.status(200).json({
+      success: true,
+      attendance: logs.map((log) => ({
+        id: log._id,
+        action: log.action,
+        timestamp: log.timestamp,
+        distanceFromGate:
+          log.distanceFromGate,
+
+        student: log.student
+          ? {
+              id: log.student._id,
+              name: log.student.name,
+              rollNumber:
+                log.student.rollNumber,
+              email: log.student.email,
+            }
+          : null,
+
+        gate: log.gate
+          ? {
+              id: log.gate._id,
+              name: log.gate.name,
+            }
+          : null,
+      })),
+    });
+  } catch (error) {
+    console.error(
+      "Get all attendance error:",
+      error
+    );
+
+    return res.status(500).json({
+      success: false,
+      message:
+        "Server error while fetching attendance",
+    });
+  }
+};
+
+// ==========================================
+// Warden: Attendance for assigned hostel
+// ==========================================
+
+const getWardenAttendance = async (
+  req,
+  res
+) => {
+  try {
+    const wardenId = req.wardenId;
+    const hostelId = req.hostelId;
+
+    // ==========================================
+    // 1. Validate Warden
+    // ==========================================
+
+    if (!wardenId || !hostelId) {
+      return res.status(403).json({
+        success: false,
+        message:
+          "Warden information is missing",
+      });
+    }
+
+    // ==========================================
+    // 2. Verify Warden
+    // ==========================================
+
+    const warden =
+      await Warden.findOne({
+        _id: wardenId,
+        hostelId,
+        active: true,
+      });
+
+    if (!warden) {
+      return res.status(403).json({
+        success: false,
+        message:
+          "Warden account is invalid or inactive",
+      });
+    }
+
+    // ==========================================
+    // 3. Find students in Warden's hostel
+    // ==========================================
+
+    const students =
+      await Student.find({
+        role: "STUDENT",
+        hostelId,
+      }).select("_id");
+
+    const studentIds = students.map(
+      (student) => student._id
+    );
+
+    // ==========================================
+    // 4. Find attendance only for those students
+    // ==========================================
+
+    const logs =
+      await EntryExitLog.find({
+        student: {
+          $in: studentIds,
+        },
+      })
+        .populate(
+          "student",
+          "name rollNumber email"
+        )
+        .populate(
+          "gate",
+          "name type"
+        )
+        .sort({
+          timestamp: -1,
+        })
+        .limit(100);
+
+    // ==========================================
+    // 5. Return records
+    // ==========================================
+
+    return res.status(200).json({
+      success: true,
+
+      attendance: logs.map((log) => ({
+        id: log._id,
+        action: log.action,
+        timestamp: log.timestamp,
+        distanceFromGate:
+          log.distanceFromGate,
+
+        student: log.student
+          ? {
+              id: log.student._id,
+              name: log.student.name,
+              rollNumber:
+                log.student.rollNumber,
+              email: log.student.email,
+            }
+          : null,
+
+        gate: log.gate
+          ? {
+              id: log.gate._id,
+              name: log.gate.name,
+              type: log.gate.type,
+            }
+          : null,
+      })),
+    });
+  } catch (error) {
+    console.error(
+      "Get warden attendance error:",
+      error
+    );
+
+    return res.status(500).json({
+      success: false,
+      message:
+        "Server error while fetching hostel attendance",
+    });
+  }
+};
+
 module.exports = {
   markAttendance,
   getAttendanceHistory,
+  getAllAttendance,
+  getWardenAttendance,
 };
