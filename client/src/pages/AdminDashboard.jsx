@@ -76,11 +76,17 @@ const AdminDashboard = () => {
         ========================= */}
 
         <section className="welcome-card">
-          <p className="small-text">Welcome</p>
+          <div className="welcome-content">
+            <div>
+              <p className="small-text">Welcome back</p>
 
-          <h2>{student?.name}</h2>
+              <h2>{student?.name}</h2>
 
-          <p>Administrator</p>
+              <p>Here's what's happening across your campus today.</p>
+            </div>
+
+            <div className="welcome-role">Administrator</div>
+          </div>
         </section>
 
         {/* =========================
@@ -97,31 +103,31 @@ const AdminDashboard = () => {
           </div>
 
           <div className="admin-stats-grid">
-            <div className="admin-stat-card">
+            <div className="admin-stat-card total-students">
               <p className="small-text">Total Students</p>
 
               <h2>{dashboard?.totalStudents}</h2>
             </div>
 
-            <div className="admin-stat-card">
+            <div className="admin-stat-card students-inside">
               <p className="small-text">Students Inside</p>
 
               <h2>{dashboard?.studentsInside}</h2>
             </div>
 
-            <div className="admin-stat-card">
+            <div className="admin-stat-card students-outside">
               <p className="small-text">Students Outside</p>
 
               <h2>{dashboard?.studentsOutside}</h2>
             </div>
 
-            <div className="admin-stat-card">
+            <div className="admin-stat-card total-gates">
               <p className="small-text">Total Gates</p>
 
               <h2>{dashboard?.totalGates}</h2>
             </div>
 
-            <div className="admin-stat-card">
+            <div className="admin-stat-card active-gates">
               <p className="small-text">Active Gates</p>
 
               <h2>{dashboard?.activeGates}</h2>
@@ -187,28 +193,45 @@ const AdminDashboard = () => {
           )}
 
           {dashboard?.recentActivity?.length > 0 && (
-            <div className="history-list">
-              {dashboard.recentActivity.map((record) => (
-                <div className="history-item" key={record._id}>
-                  <div className="history-action">
-                    <span
-                      className={`action-badge ${record.action.toLowerCase()}`}
-                    >
-                      {record.action}
-                    </span>
-                  </div>
-
-                  <div className="history-details">
-                    <h3>{record.student?.name || "Unknown Student"}</h3>
-
-                    <p>{record.student?.rollNumber || "Unknown Roll Number"}</p>
-
-                    <p>Gate: {record.gate?.name || "Unknown Gate"}</p>
-
-                    <p>{new Date(record.timestamp).toLocaleString()}</p>
-                  </div>
+            <div className="activity-table-wrapper">
+              <div className="activity-table">
+                <div className="activity-table-header">
+                  <div>Student</div>
+                  <div>Status</div>
+                  <div>Gate</div>
+                  <div>Time</div>
                 </div>
-              ))}
+
+                {dashboard.recentActivity.map((record) => (
+                  <div className="activity-table-row" key={record._id}>
+                    <div className="activity-student">
+                      <strong>
+                        {record.student?.name || "Unknown Student"}
+                      </strong>
+
+                      <span>
+                        {record.student?.rollNumber || "Unknown Roll Number"}
+                      </span>
+                    </div>
+
+                    <div>
+                      <span
+                        className={`action-badge ${record.action.toLowerCase()}`}
+                      >
+                        {record.action}
+                      </span>
+                    </div>
+
+                    <div className="activity-gate">
+                      {record.gate?.name || "Unknown Gate"}
+                    </div>
+
+                    <div className="activity-time">
+                      {new Date(record.timestamp).toLocaleString()}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </section>

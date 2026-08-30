@@ -25,10 +25,7 @@ const AdminStudents = () => {
         setStudents(data.students);
         setFilteredStudents(data.students);
       } catch (error) {
-        console.error(
-          "Load students error:",
-          error
-        );
+        console.error("Load students error:", error);
 
         setError(error.message);
       } finally {
@@ -42,9 +39,7 @@ const AdminStudents = () => {
   }, [token]);
 
   useEffect(() => {
-    const searchText = search
-      .trim()
-      .toLowerCase();
+    const searchText = search.trim().toLowerCase();
 
     if (!searchText) {
       setFilteredStudents(students);
@@ -53,15 +48,9 @@ const AdminStudents = () => {
 
     const filtered = students.filter(
       (student) =>
-        student.name
-          ?.toLowerCase()
-          .includes(searchText) ||
-        student.rollNumber
-          ?.toLowerCase()
-          .includes(searchText) ||
-        student.email
-          ?.toLowerCase()
-          .includes(searchText)
+        student.name?.toLowerCase().includes(searchText) ||
+        student.rollNumber?.toLowerCase().includes(searchText) ||
+        student.email?.toLowerCase().includes(searchText),
     );
 
     setFilteredStudents(filtered);
@@ -75,22 +64,15 @@ const AdminStudents = () => {
           <p>Student Management</p>
         </div>
 
-        <a
-          href="/admin/dashboard"
-          className="admin-back-link"
-        >
+        <a href="/admin/dashboard" className="admin-back-link">
           Dashboard
         </a>
       </header>
 
       <main className="dashboard-content">
-
         <section className="history-card">
-
           <div className="section-header">
-            <p className="small-text">
-              Student Management
-            </p>
+            <p className="small-text">Student Management</p>
 
             <h2>Students</h2>
           </div>
@@ -100,88 +82,60 @@ const AdminStudents = () => {
               type="text"
               placeholder="Search by name, roll number or email"
               value={search}
-              onChange={(event) =>
-                setSearch(event.target.value)
-              }
+              onChange={(event) => setSearch(event.target.value)}
             />
           </div>
 
-          {loading && (
-            <p className="history-empty">
-              Loading students...
-            </p>
+          {loading && <p className="history-empty">Loading students...</p>}
+
+          {error && <div className="error-message">{error}</div>}
+
+          {!loading && !error && filteredStudents.length === 0 && (
+            <p className="history-empty">No students found.</p>
           )}
 
-          {error && (
-            <div className="error-message">
-              {error}
+          {!loading && !error && filteredStudents.length > 0 && (
+            <div className="admin-student-table-wrapper">
+              <div className="admin-student-table">
+                <div className="admin-student-table-header">
+                  <div>Student</div>
+                  <div>Roll Number</div>
+                  <div>Hostel</div>
+                  <div>Status</div>
+                  <div>Email</div>
+                </div>
+
+                {filteredStudents.map((student) => (
+                  <div className="admin-student-table-row" key={student._id}>
+                    <div className="admin-student-name">
+                      <strong>{student.name}</strong>
+
+                      {student.phone && <span>{student.phone}</span>}
+                    </div>
+
+                    <div className="admin-student-roll">
+                      {student.rollNumber}
+                    </div>
+
+                    <div className="admin-student-hostel">
+                      {student.hostelId?.name || "Unknown Hostel"}
+                    </div>
+
+                    <div>
+                      <span
+                        className={`student-status ${student.status?.toLowerCase()}`}
+                      >
+                        {student.status}
+                      </span>
+                    </div>
+
+                    <div className="admin-student-email">{student.email}</div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
-
-          {!loading &&
-            !error &&
-            filteredStudents.length === 0 && (
-              <p className="history-empty">
-                No students found.
-              </p>
-            )}
-
-          {!loading &&
-            !error &&
-            filteredStudents.length > 0 && (
-              <div className="admin-students-list">
-
-                {filteredStudents.map(
-                  (student) => (
-                    <div
-                      className="admin-student-card"
-                      key={student._id}
-                    >
-
-                      <div className="admin-student-info">
-
-                        <div>
-                          <h3>
-                            {student.name}
-                          </h3>
-
-                          <p>
-                            Roll Number:{" "}
-                            {student.rollNumber}
-                          </p>
-
-                          <p>
-                            Email:{" "}
-                            {student.email}
-                          </p>
-
-                          {student.phone && (
-                            <p>
-                              Phone:{" "}
-                              {student.phone}
-                            </p>
-                          )}
-                        </div>
-
-                        <span
-                          className={`student-status ${
-                            student.status?.toLowerCase()
-                          }`}
-                        >
-                          {student.status}
-                        </span>
-
-                      </div>
-
-                    </div>
-                  )
-                )}
-
-              </div>
-            )}
-
         </section>
-
       </main>
     </div>
   );

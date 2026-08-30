@@ -1,7 +1,57 @@
+/* ==========================================
+   GLOBAL DESIGN SYSTEM
+========================================== */
+
+:root {
+  --color-background: #f7f8fa;
+  --color-surface: #ffffff;
+  --color-surface-soft: #f9fafb;
+
+  --color-text: #171923;
+  --color-text-secondary: #6b7280;
+  --color-text-muted: #9ca3af;
+
+  --color-border: #e7e9ee;
+  --color-border-input: #dfe3e8;
+
+  --color-primary: #3b82f6;
+  --color-primary-hover: #2563eb;
+  --color-primary-soft: #eff6ff;
+
+  --color-success: #16a34a;
+  --color-success-soft: #ecfdf3;
+
+  --color-warning: #d97706;
+  --color-warning-soft: #fffbeb;
+
+  --color-danger: #dc2626;
+  --color-danger-soft: #fef2f2;
+
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+
+  --shadow-sm: 0 2px 6px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.06);
+  --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.08);
+
+  --content-max-width: 1200px;
+}
+
+
+/* ==========================================
+   RESET
+========================================== */
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
 }
 
 html,
@@ -11,13 +61,24 @@ body,
 }
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
-  background: #f5f7fb;
-  color: #1f2937;
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  background: var(--color-background);
+  color: var(--color-text);
+
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 button,
-input {
+input,
+select,
+textarea {
   font: inherit;
 }
 
@@ -27,213 +88,342 @@ button {
 
 button:disabled {
   cursor: not-allowed;
-  opacity: 0.7;
+  opacity: 0.6;
 }
 
 a {
   color: inherit;
 }
 
-/* =========================
-   AUTH
-========================= */
-
-.auth-page {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-}
-
-.auth-card {
-  width: 100%;
-  max-width: 440px;
-  background: white;
-  padding: 32px;
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-}
-
-.auth-header {
-  margin-bottom: 28px;
-}
-
-.auth-header h1 {
-  font-size: 28px;
-  margin-bottom: 8px;
-}
-
-.auth-header p {
-  color: #6b7280;
-  line-height: 1.5;
-}
-
-.form-group {
-  margin-bottom: 18px;
-}
-
-.form-group label {
+img {
+  max-width: 100%;
   display: block;
-  font-weight: 600;
-  margin-bottom: 7px;
 }
 
-.form-group input {
-  width: 100%;
-  padding: 13px 14px;
-  border: 1px solid #d1d5db;
-  border-radius: 9px;
-  outline: none;
-}
-
-.form-group input:focus {
-  border-color: #2563eb;
-}
-
-.form-group select {
-  width: 100%;
-  padding: 13px 14px;
-  border: 1px solid #d1d5db;
-  border-radius: 9px;
-  outline: none;
-  background: white;
-}
-
-.form-group select:focus {
-  border-color: #2563eb;
-}
-
-.primary-button {
-  width: 100%;
-  border: none;
-  border-radius: 9px;
-  padding: 14px;
-  background: #2563eb;
-  color: white;
-  font-weight: 600;
-}
-
-.error-message {
-  margin-bottom: 18px;
-  padding: 12px;
-  border-radius: 8px;
-  background: #fee2e2;
-  color: #b91c1c;
-}
-
-.auth-footer {
-  margin-top: 22px;
-  text-align: center;
-  color: #6b7280;
-}
-
-.auth-footer a {
-  color: #2563eb;
-  font-weight: 600;
-}
-
-/* =========================
+/* ==========================================
    DASHBOARD
-========================= */
+========================================== */
 
 .dashboard-page {
   min-height: 100vh;
+  background: var(--color-background);
 }
+
+
+/* ==========================================
+   DASHBOARD HEADER
+========================================== */
 
 .dashboard-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 20px 32px;
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
+  justify-content: space-between;
+
+  min-height: 72px;
+  padding: 0 40px;
+
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .dashboard-header h1 {
-  font-size: 22px;
+  margin: 0;
+
+  color: var(--color-text);
+
+  font-size: 20px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.2px;
 }
 
 .dashboard-header p {
-  color: #6b7280;
-  margin-top: 4px;
+  margin: 5px 0 0;
+
+  color: var(--color-text-secondary);
+
+  font-size: 13px;
 }
 
+
+/* ==========================================
+   LOGOUT
+========================================== */
+
 .logout-button {
-  border: 1px solid #d1d5db;
-  background: white;
   padding: 9px 16px;
-  border-radius: 8px;
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+
+  font-size: 13px;
+  font-weight: 600;
+
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease;
 }
+
+.logout-button:hover {
+  background: var(--color-surface-soft);
+  border-color: #d1d5db;
+  color: var(--color-text);
+}
+
+
+/* ==========================================
+   DASHBOARD CONTENT
+========================================== */
 
 .dashboard-content {
   width: 100%;
-  max-width: 900px;
+  max-width: var(--content-max-width);
+
   margin: 0 auto;
-  padding: 32px;
+
+  padding: 32px 40px 48px;
+
   display: grid;
   gap: 20px;
 }
 
+
+/* ==========================================
+   COMMON DASHBOARD CARDS
+========================================== */
+
 .welcome-card,
 .status-card,
-.scan-card {
-  background: white;
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+.scan-card,
+.history-card {
+  background: var(--color-surface);
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+
+  box-shadow: var(--shadow-sm);
 }
 
-.small-text {
-  color: #6b7280;
+
+/* ==========================================
+   WELCOME CARD
+========================================== */
+
+.welcome-card {
+  padding: 28px 30px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ffffff 0%,
+      #f8fbff 100%
+    );
+}
+
+.welcome-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 24px;
+}
+
+.welcome-card .small-text {
+  margin-bottom: 7px;
+}
+
+.welcome-card h2 {
+  margin: 0;
+
+  color: var(--color-text);
+
+  font-size: 28px;
+  line-height: 1.2;
+  font-weight: 700;
+
+  letter-spacing: -0.5px;
+}
+
+.welcome-card p:last-child {
+  margin-top: 8px;
+
+  color: var(--color-text-secondary);
+
   font-size: 14px;
-  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.welcome-role {
+  flex-shrink: 0;
+
+  padding: 8px 14px;
+
+  border: 1px solid #bfdbfe;
+  border-radius: 20px;
+
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+
+/* ==========================================
+   WELCOME RESPONSIVE
+========================================== */
+
+@media (max-width: 600px) {
+  .welcome-content {
+    align-items: flex-start;
+    flex-direction: column;
+
+    gap: 16px;
+  }
+
+  .welcome-card h2 {
+    font-size: 24px;
+  }
+
+  .welcome-role {
+    align-self: flex-start;
+  }
+}
+
+/* ==========================================
+   SMALL TEXT
+========================================== */
+
+.small-text {
+  color: var(--color-text-secondary);
+
+  font-size: 12px;
+  font-weight: 600;
+
+  letter-spacing: 0.2px;
+}
+
+
+/* ==========================================
+   STATUS CARD
+========================================== */
+
+.status-card {
+  padding: 28px 30px;
 }
 
 .status-card h2 {
   margin-bottom: 8px;
+
+  font-size: 20px;
 }
 
-.status-card p:last-child,
-.scan-card p {
-  color: #6b7280;
-  line-height: 1.5;
+.status-card p:last-child {
+  color: var(--color-text-secondary);
+
+  line-height: 1.6;
 }
+
+
+/* ==========================================
+   SCAN CARD
+========================================== */
+
+.scan-card {
+  padding: 28px 30px;
+}
+
+.scan-card p {
+  color: var(--color-text-secondary);
+
+  line-height: 1.6;
+}
+
+/* ==========================================
+   STUDENT ACTION GRID
+========================================== */
+
+.student-action-grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 20px;
+}
+
+
+/* ==========================================
+   STUDENT STATUS
+========================================== */
+
+.student-action-grid .status-card,
+.student-action-grid .scan-card {
+  min-height: 210px;
+}
+
+
+/* ==========================================
+   STUDENT ACTION RESPONSIVE
+========================================== */
+
+@media (max-width: 700px) {
+  .student-action-grid {
+    grid-template-columns: 1fr;
+
+    gap: 18px;
+  }
+}
+
+
+/* ==========================================
+   SCAN BUTTON
+========================================== */
 
 .scan-button {
-  margin-top: 20px;
   width: 100%;
+
+  margin-top: 20px;
+  padding: 13px 18px;
+
   border: none;
-  border-radius: 10px;
-  padding: 15px;
-  background: #2563eb;
-  color: white;
+  border-radius: var(--radius-md);
+
+  background: var(--color-primary);
+  color: #ffffff;
+
+  font-size: 14px;
   font-weight: 600;
-  font-size: 16px;
+
+  transition:
+    background 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
 }
 
-/* =========================
-   MOBILE
-========================= */
+.scan-button:hover {
+  background: var(--color-primary-hover);
 
-@media (max-width: 600px) {
-  .auth-page {
-    padding: 16px;
-    align-items: flex-start;
-    padding-top: 40px;
-  }
+  box-shadow:
+    0 6px 14px rgba(59, 130, 246, 0.18);
+}
 
-  .auth-card {
-    padding: 24px 20px;
-    border-radius: 14px;
-  }
+.scan-button:active {
+  transform: translateY(1px);
+}
 
-  .auth-header h1 {
-    font-size: 24px;
-  }
 
+/* ==========================================
+   DASHBOARD RESPONSIVE
+========================================== */
+
+@media (max-width: 700px) {
   .dashboard-header {
-    padding: 16px;
+    min-height: 64px;
+    padding: 0 20px;
   }
 
   .dashboard-header h1 {
@@ -241,22 +431,116 @@ a {
   }
 
   .dashboard-header p {
-    font-size: 13px;
+    font-size: 12px;
+  }
+
+  .dashboard-content {
+    padding: 24px 20px 36px;
+    gap: 18px;
+  }
+}
+
+
+@media (max-width: 450px) {
+  .dashboard-header {
+    padding: 0 16px;
+  }
+
+  .dashboard-header h1 {
+    font-size: 17px;
   }
 
   .logout-button {
     padding: 8px 12px;
+    font-size: 12px;
   }
 
   .dashboard-content {
-    padding: 16px;
+    padding: 20px 16px 32px;
+  }
+
+  .welcome-card,
+  .status-card,
+  .scan-card,
+  .history-card {
+    border-radius: var(--radius-lg);
   }
 
   .welcome-card,
   .status-card,
   .scan-card {
-    padding: 20px;
-    border-radius: 14px;
+    padding: 22px 20px;
+  }
+
+  .welcome-card h2 {
+    font-size: 23px;
+  }
+}
+
+/* ==========================================
+   WARDEN HOSTEL INFO
+========================================== */
+
+.hostel-info-card {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  padding: 24px 28px;
+
+  background: var(--color-surface);
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+
+  box-shadow: var(--shadow-sm);
+}
+
+.hostel-info-card h2 {
+  margin-top: 5px;
+
+  color: var(--color-text);
+
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.hostel-code {
+  margin-top: 8px;
+
+  color: var(--color-text-secondary);
+
+  font-size: 13px;
+}
+
+.hostel-code strong {
+  color: var(--color-text);
+}
+
+.hostel-badge {
+  flex-shrink: 0;
+
+  padding: 8px 14px;
+
+  border: 1px solid #bfdbfe;
+  border-radius: 20px;
+
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+@media (max-width: 600px) {
+  .hostel-info-card {
+    align-items: flex-start;
+    flex-direction: column;
+
+    padding: 22px 20px;
   }
 }
 
@@ -413,101 +697,370 @@ a {
   }
 }
 
-/* =========================
+/* ==========================================
    ATTENDANCE HISTORY
-========================= */
+========================================== */
 
 .history-card {
-  background: white;
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow:
-    0 5px 20px rgba(0, 0, 0, 0.05);
+  background: var(--color-surface);
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+
+  padding: 26px 28px;
+
+  box-shadow: var(--shadow-sm);
+
+  overflow: hidden;
 }
 
-.section-header {
-  margin-bottom: 20px;
+/* ==========================================
+   STUDENT HISTORY TABLE
+========================================== */
+
+.student-history-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
 }
 
-.section-header h2 {
-  margin-top: 4px;
+.student-history-table {
+  min-width: 650px;
 }
 
-.history-list {
-  display: flex;
-  flex-direction: column;
+
+/* ==========================================
+   STUDENT HISTORY HEADER
+========================================== */
+
+.student-history-header {
+  display: grid;
+
+  grid-template-columns:
+    minmax(180px, 1.5fr)
+    minmax(100px, 0.8fr)
+    minmax(160px, 1fr)
+    minmax(100px, 0.7fr);
+
+  gap: 20px;
+
+  padding: 12px 16px;
+
+  border-bottom: 1px solid var(--color-border);
+
+  color: var(--color-text-muted);
+
+  font-size: 11px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.history-item {
-  display: flex;
+
+/* ==========================================
+   STUDENT HISTORY ROW
+========================================== */
+
+.student-history-row {
+  display: grid;
+
+  grid-template-columns:
+    minmax(180px, 1.5fr)
+    minmax(100px, 0.8fr)
+    minmax(160px, 1fr)
+    minmax(100px, 0.7fr);
+
+  gap: 20px;
+
   align-items: center;
-  gap: 16px;
-  padding: 16px 0;
-  border-bottom: 1px solid #e5e7eb;
+
+  padding: 16px;
+
+  border-bottom: 1px solid var(--color-border);
+
+  transition:
+    background 0.18s ease;
 }
 
-.history-item:last-child {
+.student-history-row:last-child {
   border-bottom: none;
 }
 
-.action-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 65px;
-  padding: 6px 10px;
-  border-radius: 20px;
+.student-history-row:hover {
+  background: var(--color-surface-soft);
+}
+
+
+/* ==========================================
+   STUDENT HISTORY TEXT
+========================================== */
+
+.student-history-time,
+.student-history-gate,
+.student-history-distance {
+  color: var(--color-text-secondary);
+
   font-size: 12px;
+}
+
+.student-history-time {
+  color: var(--color-text);
+
+  font-weight: 500;
+}
+
+
+/* ==========================================
+   STUDENT HISTORY RESPONSIVE
+========================================== */
+
+@media (max-width: 700px) {
+  .student-history-table {
+    min-width: 600px;
+  }
+
+  .student-history-header,
+  .student-history-row {
+    gap: 14px;
+
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
+
+
+/* ==========================================
+   SECTION HEADER
+========================================== */
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 20px;
+}
+
+.section-header .small-text {
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+}
+
+.section-header h2 {
+  margin-top: 5px;
+
+  color: var(--color-text);
+
+  font-size: 18px;
+  line-height: 1.3;
   font-weight: 700;
 }
 
+/* ==========================================
+   ACTIVITY TABLE
+========================================== */
+
+.activity-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.activity-table {
+  min-width: 700px;
+}
+
+
+/* ==========================================
+   TABLE HEADER
+========================================== */
+
+.activity-table-header {
+  display: grid;
+
+  grid-template-columns:
+    minmax(220px, 2fr)
+    minmax(100px, 0.8fr)
+    minmax(140px, 1fr)
+    minmax(170px, 1fr);
+
+  gap: 20px;
+
+  padding: 12px 16px;
+
+  border-bottom: 1px solid var(--color-border);
+
+  color: var(--color-text-muted);
+
+  font-size: 11px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+
+/* ==========================================
+   TABLE ROW
+========================================== */
+
+.activity-table-row {
+  display: grid;
+
+  grid-template-columns:
+    minmax(220px, 2fr)
+    minmax(100px, 0.8fr)
+    minmax(140px, 1fr)
+    minmax(170px, 1fr);
+
+  gap: 20px;
+
+  align-items: center;
+
+  padding: 16px;
+
+  border-bottom: 1px solid var(--color-border);
+
+  transition:
+    background 0.18s ease;
+}
+
+.activity-table-row:last-child {
+  border-bottom: none;
+}
+
+.activity-table-row:hover {
+  background: var(--color-surface-soft);
+}
+
+
+/* ==========================================
+   STUDENT
+========================================== */
+
+.activity-student {
+  display: flex;
+  flex-direction: column;
+
+  gap: 3px;
+
+  min-width: 0;
+}
+
+.activity-student strong {
+  color: var(--color-text);
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.activity-student span {
+  color: var(--color-text-muted);
+
+  font-size: 11px;
+}
+
+
+/* ==========================================
+   GATE
+========================================== */
+
+.activity-gate {
+  color: var(--color-text-secondary);
+
+  font-size: 12px;
+}
+
+
+/* ==========================================
+   TIME
+========================================== */
+
+.activity-time {
+  color: var(--color-text-secondary);
+
+  font-size: 12px;
+}
+
+
+/* ==========================================
+   MOBILE
+========================================== */
+
+@media (max-width: 700px) {
+  .activity-table {
+    min-width: 650px;
+  }
+
+  .activity-table-header,
+  .activity-table-row {
+    gap: 14px;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
+
+
+/* ==========================================
+   ACTION BADGE
+========================================== */
+
+.action-badge {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-width: 68px;
+
+  padding: 6px 10px;
+
+  border-radius: 20px;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  letter-spacing: 0.3px;
+}
+
 .action-badge.entry {
-  background: #dcfce7;
-  color: #166534;
+  background: var(--color-success-soft);
+  color: var(--color-success);
 }
 
 .action-badge.exit {
-  background: #fee2e2;
-  color: #991b1b;
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
 }
 
-.history-details {
-  flex: 1;
-}
 
-.history-details h3 {
-  margin: 0;
-  font-size: 15px;
-}
-
-.history-details p {
-  margin: 4px 0 0;
-  color: #6b7280;
-  font-size: 13px;
-}
-
-.history-distance {
-  color: #6b7280;
-  font-size: 13px;
-}
+/* ==========================================
+   EMPTY STATE
+========================================== */
 
 .history-empty {
-  color: #6b7280;
+  padding: 28px 0;
+
+  color: var(--color-text-secondary);
+
+  font-size: 13px;
+
   text-align: center;
-  padding: 20px 0;
 }
+
+
+/* ==========================================
+   HISTORY RESPONSIVE
+========================================== */
 
 @media (max-width: 600px) {
   .history-card {
-    padding: 20px;
+    padding: 22px 20px;
   }
 
-  .history-item {
-    gap: 10px;
-  }
-
-  .history-distance {
-    display: none;
+  .action-badge {
+    min-width: 60px;
+    padding: 5px 8px;
+    font-size: 10px;
   }
 }
 
@@ -535,31 +1088,126 @@ a {
   background: #6b7280;
 }
 
-/* =========================
+/* ==========================================
    ADMIN DASHBOARD
-========================= */
+========================================== */
 
 .admin-stats-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-}
 
-.admin-stat-card {
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 20px;
-}
+  grid-template-columns: repeat(5, 1fr);
 
-.admin-stat-card h2 {
-  font-size: 30px;
+  gap: 14px;
+
   margin-top: 4px;
 }
 
-.admin-stat-card .small-text {
-  margin-bottom: 4px;
+
+/* ==========================================
+   ADMIN STAT CARD
+========================================== */
+
+.admin-stat-card {
+  position: relative;
+
+  min-height: 125px;
+
+  padding: 20px;
+
+  background: var(--color-surface);
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+
+  box-shadow: var(--shadow-sm);
+
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    border-color 0.18s ease;
 }
+
+.admin-stat-card:hover {
+  transform: translateY(-2px);
+
+  border-color: #d8dde6;
+
+  box-shadow: var(--shadow-md);
+}
+
+
+/* ==========================================
+   STAT LABEL
+========================================== */
+
+.admin-stat-card .small-text {
+  margin-bottom: 12px;
+
+  color: var(--color-text-secondary);
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+
+/* ==========================================
+   STAT NUMBER
+========================================== */
+
+.admin-stat-card h2 {
+  margin: 0;
+
+  color: var(--color-text);
+
+  font-size: 30px;
+  line-height: 1;
+
+  font-weight: 700;
+
+  letter-spacing: -0.5px;
+}
+
+
+/* ==========================================
+   STAT CARD ACCENT
+========================================== */
+
+.admin-stat-card::after {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 20px;
+
+  width: 28px;
+  height: 3px;
+
+  border-radius: 0 0 4px 4px;
+
+  background: var(--color-primary);
+}
+
+.admin-stat-card.students-inside::after,
+.admin-stat-card.active-gates::after {
+  background: var(--color-success);
+}
+
+.admin-stat-card.students-outside::after {
+  background: var(--color-warning);
+}
+
+
+/* ==========================================
+   ADMIN STAT RESPONSIVE
+========================================== */
+
+@media (max-width: 1000px) {
+  .admin-stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
 
 @media (max-width: 700px) {
   .admin-stats-grid {
@@ -567,9 +1215,14 @@ a {
   }
 }
 
+
 @media (max-width: 450px) {
   .admin-stats-grid {
     grid-template-columns: 1fr;
+  }
+
+  .admin-stat-card {
+    min-height: 110px;
   }
 }
 
@@ -644,39 +1297,104 @@ a {
   }
 }
 
-/* =========================
+/* ==========================================
    ADMIN NAVIGATION
-========================= */
+========================================== */
 
 .admin-navigation {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+
+  grid-template-columns: repeat(2, 1fr);
+
   gap: 14px;
 }
 
+
 .admin-navigation-button {
+  position: relative;
+
   display: flex;
   align-items: center;
-  justify-content: center;
-  min-height: 50px;
-  padding: 12px 16px;
-  border-radius: 10px;
-  background: #2563eb;
-  color: white;
+  justify-content: space-between;
+
+  min-height: 76px;
+
+  padding: 18px 20px;
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+
+  background: var(--color-surface);
+  color: var(--color-text);
+
   text-decoration: none;
+
+  font-size: 14px;
   font-weight: 600;
-  text-align: center;
+
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    background 0.18s ease;
 }
+
+
+.admin-navigation-button::after {
+  content: "→";
+
+  color: var(--color-primary);
+
+  font-size: 18px;
+  font-weight: 500;
+
+  transition: transform 0.18s ease;
+}
+
 
 .admin-navigation-button:hover {
-  background: #1d4ed8;
+  transform: translateY(-2px);
+
+  background: var(--color-primary-soft);
+
+  border-color: #bfdbfe;
+
+  box-shadow: var(--shadow-md);
 }
 
-.admin-back-link {
-  text-decoration: none;
-  color: #2563eb;
-  font-weight: 600;
+
+.admin-navigation-button:hover::after {
+  transform: translateX(4px);
 }
+
+
+/* ==========================================
+   ADMIN BACK LINK
+========================================== */
+
+.admin-back-link {
+  display: inline-flex;
+
+  align-items: center;
+  gap: 6px;
+
+  text-decoration: none;
+
+  color: var(--color-primary);
+
+  font-weight: 600;
+
+  font-size: 14px;
+}
+
+.admin-back-link:hover {
+  color: var(--color-primary-hover);
+}
+
+
+/* ==========================================
+   ADMIN NAVIGATION RESPONSIVE
+========================================== */
 
 @media (max-width: 700px) {
   .admin-navigation {
@@ -722,5 +1440,1507 @@ a {
 
   .admin-attendance-filters .gate-cancel-button {
     width: 100%;
+  }
+}
+
+/* ==========================================
+   STUDENT MANAGEMENT TABLE
+========================================== */
+
+.student-management-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.student-management-table {
+  min-width: 720px;
+}
+
+
+/* ==========================================
+   TABLE HEADER
+========================================== */
+
+.student-management-header {
+  display: grid;
+
+  grid-template-columns:
+    minmax(200px, 1.4fr)
+    minmax(130px, 0.9fr)
+    minmax(110px, 0.7fr)
+    minmax(220px, 1.5fr);
+
+  gap: 20px;
+
+  padding: 12px 16px;
+
+  border-bottom: 1px solid var(--color-border);
+
+  color: var(--color-text-muted);
+
+  font-size: 11px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+
+/* ==========================================
+   TABLE ROW
+========================================== */
+
+.student-management-row {
+  display: grid;
+
+  grid-template-columns:
+    minmax(200px, 1.4fr)
+    minmax(130px, 0.9fr)
+    minmax(110px, 0.7fr)
+    minmax(220px, 1.5fr);
+
+  gap: 20px;
+
+  align-items: center;
+
+  padding: 16px;
+
+  border-bottom: 1px solid var(--color-border);
+
+  transition:
+    background 0.18s ease;
+}
+
+.student-management-row:last-child {
+  border-bottom: none;
+}
+
+.student-management-row:hover {
+  background: var(--color-surface-soft);
+}
+
+
+/* ==========================================
+   STUDENT NAME
+========================================== */
+
+.student-management-name {
+  min-width: 0;
+}
+
+.student-management-name strong {
+  color: var(--color-text);
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+
+/* ==========================================
+   ROLL NUMBER
+========================================== */
+
+.student-management-roll {
+  color: var(--color-text-secondary);
+
+  font-size: 12px;
+}
+
+
+/* ==========================================
+   EMAIL
+========================================== */
+
+.student-management-email {
+  overflow: hidden;
+
+  color: var(--color-text-secondary);
+
+  font-size: 12px;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media (max-width: 700px) {
+  .student-management-table {
+    min-width: 720px;
+  }
+
+  .student-management-header,
+  .student-management-row {
+    gap: 14px;
+
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
+
+/* ==========================================
+   ADMIN STUDENT TABLE
+========================================== */
+
+.admin-student-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.admin-student-table {
+  min-width: 900px;
+}
+
+
+/* ==========================================
+   HEADER
+========================================== */
+
+.admin-student-table-header {
+  display: grid;
+
+  grid-template-columns:
+    minmax(190px, 1.3fr)
+    minmax(130px, 0.9fr)
+    minmax(140px, 0.9fr)
+    minmax(100px, 0.7fr)
+    minmax(220px, 1.5fr);
+
+  gap: 18px;
+
+  padding: 12px 16px;
+
+  border-bottom: 1px solid var(--color-border);
+
+  color: var(--color-text-muted);
+
+  font-size: 11px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+
+/* ==========================================
+   ROW
+========================================== */
+
+.admin-student-table-row {
+  display: grid;
+
+  grid-template-columns:
+    minmax(190px, 1.3fr)
+    minmax(130px, 0.9fr)
+    minmax(140px, 0.9fr)
+    minmax(100px, 0.7fr)
+    minmax(220px, 1.5fr);
+
+  gap: 18px;
+
+  align-items: center;
+
+  padding: 16px;
+
+  border-bottom: 1px solid var(--color-border);
+
+  transition: background 0.18s ease;
+}
+
+.admin-student-table-row:last-child {
+  border-bottom: none;
+}
+
+.admin-student-table-row:hover {
+  background: var(--color-surface-soft);
+}
+
+
+/* ==========================================
+   STUDENT
+========================================== */
+
+.admin-student-name {
+  display: flex;
+  flex-direction: column;
+
+  gap: 3px;
+
+  min-width: 0;
+}
+
+.admin-student-name strong {
+  color: var(--color-text);
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.admin-student-name span {
+  color: var(--color-text-muted);
+
+  font-size: 11px;
+}
+
+
+/* ==========================================
+   SECONDARY INFORMATION
+========================================== */
+
+.admin-student-roll,
+.admin-student-hostel {
+  color: var(--color-text-secondary);
+
+  font-size: 12px;
+}
+
+
+/* ==========================================
+   EMAIL
+========================================== */
+
+.admin-student-email {
+  overflow: hidden;
+
+  color: var(--color-text-secondary);
+
+  font-size: 12px;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media (max-width: 900px) {
+  .admin-student-table {
+    min-width: 900px;
+  }
+
+  .admin-student-table-header,
+  .admin-student-table-row {
+    gap: 14px;
+
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
+
+/* ==========================================
+   ADMIN STUDENT STATUS BADGE
+========================================== */
+
+.admin-student-table-row .student-status {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  width: fit-content;
+
+  min-width: 72px;
+
+  padding: 6px 12px;
+
+  border-radius: 999px;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.admin-student-table-row .student-status.inside {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.admin-student-table-row .student-status.outside {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+/* ==========================================
+   WARDEN ATTENDANCE TABLE
+========================================== */
+
+.warden-attendance-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.warden-attendance-table {
+  min-width: 900px;
+}
+
+
+/* ==========================================
+   HEADER
+========================================== */
+
+.warden-attendance-header {
+  display: grid;
+
+  grid-template-columns:
+    minmax(200px, 1.5fr)
+    minmax(100px, 0.7fr)
+    minmax(140px, 1fr)
+    minmax(90px, 0.6fr)
+    minmax(170px, 1fr);
+
+  gap: 18px;
+
+  padding: 12px 16px;
+
+  border-bottom: 1px solid var(--color-border);
+
+  color: var(--color-text-muted);
+
+  font-size: 11px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+
+/* ==========================================
+   ROW
+========================================== */
+
+.warden-attendance-row {
+  display: grid;
+
+  grid-template-columns:
+    minmax(200px, 1.5fr)
+    minmax(100px, 0.7fr)
+    minmax(140px, 1fr)
+    minmax(90px, 0.6fr)
+    minmax(170px, 1fr);
+
+  gap: 18px;
+
+  align-items: center;
+
+  padding: 16px;
+
+  border-bottom: 1px solid var(--color-border);
+
+  transition: background 0.18s ease;
+}
+
+.warden-attendance-row:last-child {
+  border-bottom: none;
+}
+
+.warden-attendance-row:hover {
+  background: var(--color-surface-soft);
+}
+
+
+/* ==========================================
+   DISTANCE
+========================================== */
+
+.warden-attendance-distance {
+  color: var(--color-text-secondary);
+
+  font-size: 12px;
+}
+
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media (max-width: 900px) {
+  .warden-attendance-table {
+    min-width: 850px;
+  }
+
+  .warden-attendance-header,
+  .warden-attendance-row {
+    gap: 14px;
+
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
+
+/* ==========================================
+   ADMIN ATTENDANCE TABLE
+========================================== */
+
+.admin-attendance-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.admin-attendance-table {
+  min-width: 850px;
+}
+
+
+/* ==========================================
+   HEADER
+========================================== */
+
+.admin-attendance-header {
+  display: grid;
+
+  grid-template-columns:
+    minmax(200px, 1.5fr)
+    minmax(100px, 0.7fr)
+    minmax(140px, 1fr)
+    minmax(90px, 0.6fr)
+    minmax(170px, 1fr);
+
+  gap: 18px;
+
+  padding: 12px 16px;
+
+  border-bottom: 1px solid var(--color-border);
+
+  color: var(--color-text-muted);
+
+  font-size: 11px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+
+/* ==========================================
+   ROW
+========================================== */
+
+.admin-attendance-row {
+  display: grid;
+
+  grid-template-columns:
+    minmax(200px, 1.5fr)
+    minmax(100px, 0.7fr)
+    minmax(140px, 1fr)
+    minmax(90px, 0.6fr)
+    minmax(170px, 1fr);
+
+  gap: 18px;
+
+  align-items: center;
+
+  padding: 16px;
+
+  border-bottom: 1px solid var(--color-border);
+
+  transition: background 0.18s ease;
+}
+
+.admin-attendance-row:last-child {
+  border-bottom: none;
+}
+
+.admin-attendance-row:hover {
+  background: var(--color-surface-soft);
+}
+
+
+/* ==========================================
+   DISTANCE
+========================================== */
+
+.admin-attendance-distance {
+  color: var(--color-text-secondary);
+
+  font-size: 12px;
+}
+
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media (max-width: 900px) {
+  .admin-attendance-table {
+    min-width: 850px;
+  }
+
+  .admin-attendance-header,
+  .admin-attendance-row {
+    gap: 14px;
+
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
+
+/* ==========================================
+   ADMIN GATES TABLE
+========================================== */
+
+.admin-gates-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.admin-gates-table {
+  min-width: 1050px;
+}
+
+
+/* ==========================================
+   HEADER
+========================================== */
+
+.admin-gates-table-header {
+  display: grid;
+
+  grid-template-columns:
+    minmax(140px, 1fr)
+    minmax(120px, 0.9fr)
+    minmax(150px, 1fr)
+    minmax(170px, 1.2fr)
+    minmax(80px, 0.6fr)
+    minmax(100px, 0.7fr)
+    minmax(280px, 1.8fr);
+
+  gap: 16px;
+
+  padding: 12px 16px;
+
+  border-bottom: 1px solid var(--color-border);
+
+  color: var(--color-text-muted);
+
+  font-size: 11px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+
+/* ==========================================
+   ROW
+========================================== */
+
+.admin-gates-table-row {
+  display: grid;
+
+  grid-template-columns:
+    minmax(140px, 1fr)
+    minmax(120px, 0.9fr)
+    minmax(150px, 1fr)
+    minmax(170px, 1.2fr)
+    minmax(80px, 0.6fr)
+    minmax(100px, 0.7fr)
+    minmax(280px, 1.8fr);
+
+  gap: 16px;
+
+  align-items: center;
+
+  padding: 17px 16px;
+
+  border-bottom: 1px solid var(--color-border);
+
+  transition: background 0.18s ease;
+}
+
+.admin-gates-table-row:last-child {
+  border-bottom: none;
+}
+
+.admin-gates-table-row:hover {
+  background: var(--color-surface-soft);
+}
+
+
+/* ==========================================
+   GATE NAME
+========================================== */
+
+.admin-gate-name {
+  min-width: 0;
+}
+
+.admin-gate-name strong {
+  color: var(--color-text);
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+
+/* ==========================================
+   SECONDARY INFORMATION
+========================================== */
+
+.admin-gate-type,
+.admin-gate-hostel,
+.admin-gate-location,
+.admin-gate-radius {
+  color: var(--color-text-secondary);
+
+  font-size: 12px;
+}
+
+.admin-gate-location {
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+/* ==========================================
+   GATE ACTIONS
+========================================== */
+
+.admin-gate-actions {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 7px;
+}
+
+.admin-gate-actions button {
+  padding: 7px 10px;
+
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+
+  background: var(--color-surface);
+
+  color: var(--color-text-secondary);
+
+  font-size: 11px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease;
+}
+
+.admin-gate-actions button:hover {
+  background: var(--color-surface-soft);
+
+  border-color: var(--color-primary);
+
+  color: var(--color-primary);
+}
+
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media (max-width: 1100px) {
+  .admin-gates-table {
+    min-width: 1000px;
+  }
+}
+
+/* ==========================================
+   GATE STATUS BADGES
+========================================== */
+
+.admin-gates-table-row .gate-status {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  width: fit-content;
+  min-width: 72px;
+
+  padding: 6px 11px;
+
+  border-radius: 999px;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  letter-spacing: 0.4px;
+}
+
+.admin-gates-table-row .gate-status.active {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.admin-gates-table-row .gate-status.inactive {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+/* ==========================================
+   GATE FORM
+========================================== */
+
+.gate-form-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: 28px;
+  box-shadow: var(--shadow-sm);
+}
+
+.gate-form {
+  display: grid;
+  gap: 18px;
+}
+
+.gate-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+.gate-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.gate-form-group label {
+  color: var(--color-text);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.gate-form-group input,
+.gate-form-group select {
+  width: 100%;
+  padding: 11px 13px;
+
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-md);
+
+  background: var(--color-surface);
+  color: var(--color-text);
+
+  font-size: 13px;
+  outline: none;
+
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.gate-form-group input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.gate-form-group input:focus,
+.gate-form-group select:focus {
+  border-color: var(--color-primary);
+
+  box-shadow:
+    0 0 0 3px var(--color-primary-soft);
+}
+
+.gate-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+
+  margin-top: 4px;
+}
+
+.gate-form-actions button {
+  min-width: 120px;
+}
+
+/* ==========================================
+   GATE FORM RESPONSIVE
+========================================== */
+
+@media (max-width: 700px) {
+  .gate-form-card {
+    padding: 22px 20px;
+  }
+
+  .gate-form-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .gate-form-actions {
+    flex-direction: column;
+  }
+
+  .gate-form-actions button {
+    width: 100%;
+  }
+}
+
+/* ==========================================
+   WARDEN FORM
+========================================== */
+
+.warden-form {
+  display: grid;
+  gap: 18px;
+}
+
+.warden-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.warden-form-group label {
+  color: var(--color-text);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.warden-form-group input,
+.warden-form-group select {
+  width: 100%;
+  padding: 11px 13px;
+
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-md);
+
+  background: var(--color-surface);
+  color: var(--color-text);
+
+  font-size: 13px;
+  outline: none;
+
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.warden-form-group input:focus,
+.warden-form-group select:focus {
+  border-color: var(--color-primary);
+
+  box-shadow:
+    0 0 0 3px var(--color-primary-soft);
+}
+
+.warden-form-actions {
+  display: flex;
+  justify-content: flex-end;
+
+  margin-top: 4px;
+}
+
+.warden-form-actions .primary-button {
+  min-width: 140px;
+}
+
+
+/* ==========================================
+   WARDEN TABLE
+========================================== */
+
+.admin-wardens-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.admin-wardens-table {
+  min-width: 900px;
+}
+
+.admin-wardens-header {
+  display: grid;
+
+  grid-template-columns:
+    minmax(150px, 1fr)
+    minmax(210px, 1.4fr)
+    minmax(120px, 0.8fr)
+    minmax(180px, 1.2fr)
+    minmax(90px, 0.6fr)
+    minmax(100px, 0.7fr);
+
+  gap: 18px;
+
+  padding: 12px 16px;
+
+  border-bottom: 1px solid var(--color-border);
+
+  color: var(--color-text-muted);
+
+  font-size: 11px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.admin-wardens-row {
+  display: grid;
+
+  grid-template-columns:
+    minmax(150px, 1fr)
+    minmax(210px, 1.4fr)
+    minmax(120px, 0.8fr)
+    minmax(180px, 1.2fr)
+    minmax(90px, 0.6fr)
+    minmax(100px, 0.7fr);
+
+  gap: 18px;
+
+  align-items: center;
+
+  padding: 16px;
+
+  border-bottom: 1px solid var(--color-border);
+
+  transition: background 0.18s ease;
+}
+
+.admin-wardens-row:last-child {
+  border-bottom: none;
+}
+
+.admin-wardens-row:hover {
+  background: var(--color-surface-soft);
+}
+
+
+/* ==========================================
+   WARDEN DETAILS
+========================================== */
+
+.admin-warden-name strong {
+  color: var(--color-text);
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.admin-warden-email,
+.admin-warden-phone,
+.admin-warden-hostel {
+  overflow: hidden;
+
+  color: var(--color-text-secondary);
+
+  font-size: 12px;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+/* ==========================================
+   ROLE BADGE
+========================================== */
+
+.warden-role-badge {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-width: 68px;
+
+  padding: 6px 10px;
+
+  border-radius: 999px;
+
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+
+  font-size: 10px;
+  font-weight: 700;
+
+  letter-spacing: 0.4px;
+}
+
+
+/* ==========================================
+   REMOVE BUTTON
+========================================== */
+
+.warden-remove-button {
+  padding: 7px 11px;
+
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+
+  background: #fef2f2;
+  color: #b91c1c;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.warden-remove-button:hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
+}
+
+.warden-remove-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media (max-width: 900px) {
+  .admin-wardens-table {
+    min-width: 900px;
+  }
+
+  .admin-wardens-header,
+  .admin-wardens-row {
+    gap: 14px;
+
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
+
+@media (max-width: 700px) {
+  .warden-form-actions {
+    justify-content: stretch;
+  }
+
+  .warden-form-actions .primary-button {
+    width: 100%;
+  }
+}
+
+/* ==========================================
+   GUARD FORM
+========================================== */
+
+.guard-form {
+  display: grid;
+  gap: 18px;
+}
+
+.guard-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.guard-form-group label {
+  color: var(--color-text);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.guard-form-group input {
+  width: 100%;
+  padding: 11px 13px;
+
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-md);
+
+  background: var(--color-surface);
+  color: var(--color-text);
+
+  font-size: 13px;
+  outline: none;
+
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.guard-form-group input:focus {
+  border-color: var(--color-primary);
+
+  box-shadow:
+    0 0 0 3px var(--color-primary-soft);
+}
+
+.guard-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+.guard-form-actions .primary-button {
+  min-width: 140px;
+}
+
+
+/* ==========================================
+   GUARD TABLE
+========================================== */
+
+.admin-guards-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.admin-guards-table {
+  min-width: 760px;
+}
+
+.admin-guards-header {
+  display: grid;
+
+  grid-template-columns:
+    minmax(150px, 1fr)
+    minmax(220px, 1.5fr)
+    minmax(130px, 0.8fr)
+    minmax(100px, 0.7fr)
+    minmax(110px, 0.7fr);
+
+  gap: 18px;
+
+  padding: 12px 16px;
+
+  border-bottom: 1px solid var(--color-border);
+
+  color: var(--color-text-muted);
+
+  font-size: 11px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.admin-guards-row {
+  display: grid;
+
+  grid-template-columns:
+    minmax(150px, 1fr)
+    minmax(220px, 1.5fr)
+    minmax(130px, 0.8fr)
+    minmax(100px, 0.7fr)
+    minmax(110px, 0.7fr);
+
+  gap: 18px;
+
+  align-items: center;
+
+  padding: 16px;
+
+  border-bottom: 1px solid var(--color-border);
+
+  transition: background 0.18s ease;
+}
+
+.admin-guards-row:last-child {
+  border-bottom: none;
+}
+
+.admin-guards-row:hover {
+  background: var(--color-surface-soft);
+}
+
+
+/* ==========================================
+   GUARD DETAILS
+========================================== */
+
+.admin-guard-name strong {
+  color: var(--color-text);
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.admin-guard-email,
+.admin-guard-phone {
+  overflow: hidden;
+
+  color: var(--color-text-secondary);
+
+  font-size: 12px;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+/* ==========================================
+   ROLE BADGE
+========================================== */
+
+.guard-role-badge {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-width: 60px;
+
+  padding: 6px 10px;
+
+  border-radius: 999px;
+
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+
+  font-size: 10px;
+  font-weight: 700;
+
+  letter-spacing: 0.4px;
+}
+
+
+/* ==========================================
+   REMOVE BUTTON
+========================================== */
+
+.guard-remove-button {
+  padding: 7px 11px;
+
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+
+  background: #fef2f2;
+  color: #b91c1c;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.guard-remove-button:hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
+}
+
+.guard-remove-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media (max-width: 800px) {
+  .admin-guards-table {
+    min-width: 760px;
+  }
+
+  .admin-guards-header,
+  .admin-guards-row {
+    gap: 14px;
+
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
+
+@media (max-width: 700px) {
+  .guard-form-actions {
+    justify-content: stretch;
+  }
+
+  .guard-form-actions .primary-button {
+    width: 100%;
+  }
+}
+
+/* ==========================================
+   GUARD HOSTEL SELECTOR
+========================================== */
+
+.guard-hostel-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+
+  max-width: 520px;
+}
+
+.guard-hostel-selector label {
+  color: var(--color-text);
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.guard-hostel-selector select {
+  width: 100%;
+
+  padding: 11px 13px;
+
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-md);
+
+  background: var(--color-surface);
+  color: var(--color-text);
+
+  font-size: 13px;
+
+  outline: none;
+
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.guard-hostel-selector select:focus {
+  border-color: var(--color-primary);
+
+  box-shadow:
+    0 0 0 3px var(--color-primary-soft);
+}
+
+
+/* ==========================================
+   GUARD STUDENT TABLE
+========================================== */
+
+.guard-student-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.guard-student-table {
+  min-width: 850px;
+}
+
+
+/* ==========================================
+   HEADER
+========================================== */
+
+.guard-student-header {
+  display: grid;
+
+  grid-template-columns:
+    minmax(160px, 1fr)
+    minmax(120px, 0.8fr)
+    minmax(220px, 1.4fr)
+    minmax(130px, 0.8fr)
+    minmax(100px, 0.7fr);
+
+  gap: 18px;
+
+  padding: 12px 16px;
+
+  border-bottom: 1px solid var(--color-border);
+
+  color: var(--color-text-muted);
+
+  font-size: 11px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+
+/* ==========================================
+   ROW
+========================================== */
+
+.guard-student-row {
+  display: grid;
+
+  grid-template-columns:
+    minmax(160px, 1fr)
+    minmax(120px, 0.8fr)
+    minmax(220px, 1.4fr)
+    minmax(130px, 0.8fr)
+    minmax(100px, 0.7fr);
+
+  gap: 18px;
+
+  align-items: center;
+
+  padding: 16px;
+
+  border-bottom: 1px solid var(--color-border);
+
+  transition: background 0.18s ease;
+}
+
+.guard-student-row:last-child {
+  border-bottom: none;
+}
+
+.guard-student-row:hover {
+  background: var(--color-surface-soft);
+}
+
+
+/* ==========================================
+   STUDENT
+========================================== */
+
+.guard-student-name strong {
+  color: var(--color-text);
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+
+/* ==========================================
+   DETAILS
+========================================== */
+
+.guard-student-roll,
+.guard-student-email,
+.guard-student-phone {
+  overflow: hidden;
+
+  color: var(--color-text-secondary);
+
+  font-size: 12px;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media (max-width: 900px) {
+  .guard-student-table {
+    min-width: 850px;
+  }
+
+  .guard-student-header,
+  .guard-student-row {
+    gap: 14px;
+
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
+
+@media (max-width: 600px) {
+  .guard-hostel-selector {
+    max-width: none;
   }
 }

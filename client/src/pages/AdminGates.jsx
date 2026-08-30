@@ -66,10 +66,7 @@ const AdminGates = () => {
 
       setHostels(data.hostels);
     } catch (error) {
-      console.error(
-        "Load hostels error:",
-        error
-      );
+      console.error("Load hostels error:", error);
 
       setError(error.message);
     } finally {
@@ -98,10 +95,7 @@ const AdminGates = () => {
 
     // If gate type changes to MAIN,
     // remove hostel selection.
-    if (
-      name === "type" &&
-      value === "MAIN"
-    ) {
+    if (name === "type" && value === "MAIN") {
       setForm((currentForm) => ({
         ...currentForm,
         type: "MAIN",
@@ -138,13 +132,8 @@ const AdminGates = () => {
     setSuccess("");
 
     // Hostel gate must have hostel
-    if (
-      form.type === "HOSTEL" &&
-      !form.hostelId
-    ) {
-      setError(
-        "Please select a hostel for the hostel gate."
-      );
+    if (form.type === "HOSTEL" && !form.hostelId) {
+      setError("Please select a hostel for the hostel gate.");
 
       return;
     }
@@ -156,10 +145,7 @@ const AdminGates = () => {
           id: editingGate.id,
           name: form.name,
           type: form.type,
-          hostelId:
-            form.type === "HOSTEL"
-              ? form.hostelId
-              : undefined,
+          hostelId: form.type === "HOSTEL" ? form.hostelId : undefined,
           latitude: Number(form.latitude),
           longitude: Number(form.longitude),
           radius: Number(form.radius),
@@ -168,45 +154,30 @@ const AdminGates = () => {
 
         setGates((currentGates) =>
           currentGates.map((gate) =>
-            gate.id === editingGate.id
-              ? data.gate
-              : gate
-          )
+            gate.id === editingGate.id ? data.gate : gate,
+          ),
         );
 
-        setSuccess(
-          "Gate updated successfully."
-        );
+        setSuccess("Gate updated successfully.");
       } else {
         const data = await createGate({
           token,
           name: form.name,
           type: form.type,
-          hostelId:
-            form.type === "HOSTEL"
-              ? form.hostelId
-              : undefined,
+          hostelId: form.type === "HOSTEL" ? form.hostelId : undefined,
           latitude: Number(form.latitude),
           longitude: Number(form.longitude),
           radius: Number(form.radius),
         });
 
-        setGates((currentGates) => [
-          data.gate,
-          ...currentGates,
-        ]);
+        setGates((currentGates) => [data.gate, ...currentGates]);
 
-        setSuccess(
-          "Gate created successfully."
-        );
+        setSuccess("Gate created successfully.");
       }
 
       resetForm();
     } catch (error) {
-      console.error(
-        "Save gate error:",
-        error
-      );
+      console.error("Save gate error:", error);
 
       setError(error.message);
     }
@@ -226,8 +197,7 @@ const AdminGates = () => {
     setForm({
       name: gate.name,
       type: gate.type || "MAIN",
-      hostelId:
-        gate.hostelId || "",
+      hostelId: gate.hostelId || "",
       latitude: String(gate.latitude),
       longitude: String(gate.longitude),
       radius: String(gate.radius),
@@ -240,7 +210,7 @@ const AdminGates = () => {
 
   const handleDelete = async (gate) => {
     const confirmed = window.confirm(
-      `Are you sure you want to delete "${gate.name}"?`
+      `Are you sure you want to delete "${gate.name}"?`,
     );
 
     if (!confirmed) {
@@ -257,26 +227,16 @@ const AdminGates = () => {
       });
 
       setGates((currentGates) =>
-        currentGates.filter(
-          (currentGate) =>
-            currentGate.id !== gate.id
-        )
+        currentGates.filter((currentGate) => currentGate.id !== gate.id),
       );
 
-      setSuccess(
-        "Gate deleted successfully."
-      );
+      setSuccess("Gate deleted successfully.");
 
-      if (
-        editingGate?.id === gate.id
-      ) {
+      if (editingGate?.id === gate.id) {
         resetForm();
       }
     } catch (error) {
-      console.error(
-        "Delete gate error:",
-        error
-      );
+      console.error("Delete gate error:", error);
 
       setError(error.message);
     }
@@ -296,10 +256,7 @@ const AdminGates = () => {
         id: gate.id,
         name: gate.name,
         type: gate.type,
-        hostelId:
-          gate.type === "HOSTEL"
-            ? gate.hostelId
-            : undefined,
+        hostelId: gate.type === "HOSTEL" ? gate.hostelId : undefined,
         latitude: gate.latitude,
         longitude: gate.longitude,
         radius: gate.radius,
@@ -308,24 +265,15 @@ const AdminGates = () => {
 
       setGates((currentGates) =>
         currentGates.map((currentGate) =>
-          currentGate.id === gate.id
-            ? data.gate
-            : currentGate
-        )
+          currentGate.id === gate.id ? data.gate : currentGate,
+        ),
       );
 
       setSuccess(
-        `Gate ${
-          data.gate.active
-            ? "activated"
-            : "deactivated"
-        } successfully.`
+        `Gate ${data.gate.active ? "activated" : "deactivated"} successfully.`,
       );
     } catch (error) {
-      console.error(
-        "Toggle gate error:",
-        error
-      );
+      console.error("Toggle gate error:", error);
 
       setError(error.message);
     }
@@ -350,10 +298,7 @@ const AdminGates = () => {
         image: data.qrCode,
       });
     } catch (error) {
-      console.error(
-        "QR code error:",
-        error
-      );
+      console.error("QR code error:", error);
 
       setError(error.message);
     }
@@ -367,16 +312,12 @@ const AdminGates = () => {
           <p>Gate Management</p>
         </div>
 
-        <a
-          href="/admin/dashboard"
-          className="admin-back-link"
-        >
+        <a href="/admin/dashboard" className="admin-back-link">
           Dashboard
         </a>
       </header>
 
       <main className="dashboard-content">
-
         {/* ======================================
             CREATE / EDIT GATE
         ====================================== */}
@@ -384,38 +325,21 @@ const AdminGates = () => {
         <section className="history-card">
           <div className="section-header">
             <div>
-              <p className="small-text">
-                Gate Management
-              </p>
+              <p className="small-text">Gate Management</p>
 
-              <h2>
-                {editingGate
-                  ? "Edit Gate"
-                  : "Create New Gate"}
-              </h2>
+              <h2>{editingGate ? "Edit Gate" : "Create New Gate"}</h2>
             </div>
           </div>
 
-          {error && (
-            <div className="error-message">
-              {error}
-            </div>
-          )}
+          {error && <div className="error-message">{error}</div>}
 
-          {success && (
-            <div className="success-message">
-              {success}
-            </div>
-          )}
+          {success && <div className="success-message">{success}</div>}
 
-          <form onSubmit={handleSubmit}>
-
+          <form onSubmit={handleSubmit} className="gate-form">
             {/* GATE NAME */}
 
-            <div className="form-group">
-              <label htmlFor="name">
-                Gate Name
-              </label>
+            <div className="gate-form-group">
+              <label htmlFor="name">Gate Name</label>
 
               <input
                 id="name"
@@ -430,10 +354,8 @@ const AdminGates = () => {
 
             {/* GATE TYPE */}
 
-            <div className="form-group">
-              <label htmlFor="type">
-                Gate Type
-              </label>
+            <div className="gate-form-group">
+              <label htmlFor="type">Gate Type</label>
 
               <select
                 id="type"
@@ -442,23 +364,17 @@ const AdminGates = () => {
                 onChange={handleChange}
                 required
               >
-                <option value="MAIN">
-                  Main Gate
-                </option>
+                <option value="MAIN">Main Gate</option>
 
-                <option value="HOSTEL">
-                  Hostel Gate
-                </option>
+                <option value="HOSTEL">Hostel Gate</option>
               </select>
             </div>
 
             {/* HOSTEL */}
 
             {form.type === "HOSTEL" && (
-              <div className="form-group">
-                <label htmlFor="hostelId">
-                  Hostel
-                </label>
+              <div className="gate-form-group">
+                <label htmlFor="hostelId">Hostel</label>
 
                 <select
                   id="hostelId"
@@ -469,18 +385,12 @@ const AdminGates = () => {
                   disabled={hostelsLoading}
                 >
                   <option value="">
-                    {hostelsLoading
-                      ? "Loading hostels..."
-                      : "Select hostel"}
+                    {hostelsLoading ? "Loading hostels..." : "Select hostel"}
                   </option>
 
                   {hostels.map((hostel) => (
-                    <option
-                      key={hostel._id}
-                      value={hostel._id}
-                    >
-                      {hostel.name} (
-                      {hostel.code})
+                    <option key={hostel._id} value={hostel._id}>
+                      {hostel.name} ({hostel.code})
                     </option>
                   ))}
                 </select>
@@ -489,10 +399,8 @@ const AdminGates = () => {
 
             {/* LATITUDE */}
 
-            <div className="form-group">
-              <label htmlFor="latitude">
-                Latitude
-              </label>
+            <div className="gate-form-group">
+              <label htmlFor="latitude">Latitude</label>
 
               <input
                 id="latitude"
@@ -508,10 +416,8 @@ const AdminGates = () => {
 
             {/* LONGITUDE */}
 
-            <div className="form-group">
-              <label htmlFor="longitude">
-                Longitude
-              </label>
+            <div className="gate-form-group">
+              <label htmlFor="longitude">Longitude</label>
 
               <input
                 id="longitude"
@@ -527,10 +433,8 @@ const AdminGates = () => {
 
             {/* RADIUS */}
 
-            <div className="form-group">
-              <label htmlFor="radius">
-                Geofence Radius (meters)
-              </label>
+            <div className="gate-form-group">
+              <label htmlFor="radius">Geofence Radius (meters)</label>
 
               <input
                 id="radius"
@@ -544,24 +448,21 @@ const AdminGates = () => {
               />
             </div>
 
-            <button
-              type="submit"
-              className="primary-button"
-            >
-              {editingGate
-                ? "Update Gate"
-                : "Create Gate"}
-            </button>
-
-            {editingGate && (
-              <button
-                type="button"
-                className="gate-cancel-button"
-                onClick={resetForm}
-              >
-                Cancel Edit
+            <div className="gate-form-actions">
+              <button type="submit" className="primary-button">
+                {editingGate ? "Update Gate" : "Create Gate"}
               </button>
-            )}
+
+              {editingGate && (
+                <button
+                  type="button"
+                  className="gate-cancel-button"
+                  onClick={resetForm}
+                >
+                  Cancel Edit
+                </button>
+              )}
+            </div>
           </form>
         </section>
 
@@ -571,142 +472,96 @@ const AdminGates = () => {
 
         <section className="history-card">
           <div className="section-header">
-            <p className="small-text">
-              Existing Gates
-            </p>
+            <p className="small-text">Existing Gates</p>
 
             <h2>All Gates</h2>
           </div>
 
-          {loading && (
-            <p className="history-empty">
-              Loading gates...
-            </p>
+          {loading && <p className="history-empty">Loading gates...</p>}
+
+          {!loading && gates.length === 0 && (
+            <p className="history-empty">No gates created yet.</p>
           )}
 
-          {!loading &&
-            gates.length === 0 && (
-              <p className="history-empty">
-                No gates created yet.
-              </p>
-            )}
+          {!loading && gates.length > 0 && (
+            <div className="admin-gates-table-wrapper">
+              <div className="admin-gates-table">
+                <div className="admin-gates-table-header">
+                  <div>Gate</div>
+                  <div>Type</div>
+                  <div>Hostel</div>
+                  <div>Location</div>
+                  <div>Radius</div>
+                  <div>Status</div>
+                  <div>Actions</div>
+                </div>
 
-          {!loading &&
-            gates.length > 0 && (
-              <div className="admin-gates-list">
                 {gates.map((gate) => (
-                  <div
-                    className="admin-gate-card"
-                    key={gate.id}
-                  >
-                    <div className="admin-gate-info">
-                      <div>
-                        <h3>
-                          {gate.name}
-                        </h3>
+                  <div className="admin-gates-table-row" key={gate.id}>
+                    {/* Gate */}
+                    <div className="admin-gate-name">
+                      <strong>{gate.name}</strong>
+                    </div>
 
-                        <p>
-                          Type:{" "}
-                          {gate.type ===
-                          "HOSTEL"
-                            ? "Hostel Gate"
-                            : "Main Gate"}
-                        </p>
+                    {/* Type */}
+                    <div className="admin-gate-type">
+                      {gate.type === "HOSTEL" ? "Hostel Gate" : "Main Gate"}
+                    </div>
 
-                        {gate.type ===
-                          "HOSTEL" &&
-                          gate.hostel && (
-                            <p>
-                              Hostel:{" "}
-                              {
-                                gate.hostel
-                                  .name
-                              }{" "}
-                              (
-                              {
-                                gate.hostel
-                                  .code
-                              }
-                              )
-                            </p>
-                          )}
+                    {/* Hostel */}
+                    <div className="admin-gate-hostel">
+                      {gate.type === "HOSTEL" && gate.hostel
+                        ? `${gate.hostel.name} (${gate.hostel.code})`
+                        : "Campus"}
+                    </div>
 
-                        <p>
-                          Latitude:{" "}
-                          {gate.latitude}
-                        </p>
-
-                        <p>
-                          Longitude:{" "}
-                          {gate.longitude}
-                        </p>
-
-                        <p>
-                          Radius:{" "}
-                          {gate.radius}m
-                        </p>
-                      </div>
-
-                      <span
-                        className={`gate-status ${
-                          gate.active
-                            ? "active"
-                            : "inactive"
-                        }`}
-                      >
-                        {gate.active
-                          ? "ACTIVE"
-                          : "INACTIVE"}
+                    {/* Location */}
+                    <div className="admin-gate-location">
+                      <span>
+                        {gate.latitude}, {gate.longitude}
                       </span>
                     </div>
 
-                    <div className="admin-gate-actions">
+                    {/* Radius */}
+                    <div className="admin-gate-radius">{gate.radius}m</div>
 
-                      <button
-                        type="button"
-                        onClick={() =>
-                          handleEdit(gate)
-                        }
+                    {/* Status */}
+                    <div>
+                      <span
+                        className={`gate-status ${
+                          gate.active ? "active" : "inactive"
+                        }`}
                       >
+                        {gate.active ? "ACTIVE" : "INACTIVE"}
+                      </span>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="admin-gate-actions">
+                      <button type="button" onClick={() => handleEdit(gate)}>
                         Edit
                       </button>
 
                       <button
                         type="button"
-                        onClick={() =>
-                          handleToggleStatus(
-                            gate
-                          )
-                        }
+                        onClick={() => handleToggleStatus(gate)}
                       >
-                        {gate.active
-                          ? "Deactivate"
-                          : "Activate"}
+                        {gate.active ? "Deactivate" : "Activate"}
                       </button>
 
-                      <button
-                        type="button"
-                        onClick={() =>
-                          handleShowQr(gate)
-                        }
-                      >
+                      <button type="button" onClick={() => handleShowQr(gate)}>
                         Show QR
                       </button>
 
-                      <button
-                        type="button"
-                        onClick={() =>
-                          handleDelete(gate)
-                        }
-                      >
+                      <button type="button" onClick={() => handleDelete(gate)}>
                         Delete
                       </button>
-
                     </div>
                   </div>
                 ))}
               </div>
-            )}
+            </div>
+          )}
         </section>
 
         {/* ======================================
@@ -716,9 +571,7 @@ const AdminGates = () => {
         {qrCode && (
           <section className="history-card admin-qr-card">
             <div className="section-header">
-              <p className="small-text">
-                Gate QR Code
-              </p>
+              <p className="small-text">Gate QR Code</p>
 
               <h2>{qrCode.name}</h2>
             </div>
@@ -740,15 +593,12 @@ const AdminGates = () => {
             <button
               type="button"
               className="gate-cancel-button"
-              onClick={() =>
-                setQrCode(null)
-              }
+              onClick={() => setQrCode(null)}
             >
               Close QR
             </button>
           </section>
         )}
-
       </main>
     </div>
   );

@@ -7,26 +7,19 @@ import { getWardenAttendance } from "../services/api";
 const WardenAttendance = () => {
   const { token } = useAuth();
 
-  const [attendance, setAttendance] =
-    useState([]);
+  const [attendance, setAttendance] = useState([]);
 
-  const [filteredAttendance, setFilteredAttendance] =
-    useState([]);
+  const [filteredAttendance, setFilteredAttendance] = useState([]);
 
-  const [search, setSearch] =
-    useState("");
+  const [search, setSearch] = useState("");
 
-  const [actionFilter, setActionFilter] =
-    useState("ALL");
+  const [actionFilter, setActionFilter] = useState("ALL");
 
-  const [dateFilter, setDateFilter] =
-    useState("");
+  const [dateFilter, setDateFilter] = useState("");
 
-  const [loading, setLoading] =
-    useState(true);
+  const [loading, setLoading] = useState(true);
 
-  const [error, setError] =
-    useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const loadAttendance = async () => {
@@ -34,21 +27,13 @@ const WardenAttendance = () => {
         setLoading(true);
         setError("");
 
-        const data =
-          await getWardenAttendance(token);
+        const data = await getWardenAttendance(token);
 
-        setAttendance(
-          data.attendance || []
-        );
+        setAttendance(data.attendance || []);
 
-        setFilteredAttendance(
-          data.attendance || []
-        );
+        setFilteredAttendance(data.attendance || []);
       } catch (error) {
-        console.error(
-          "Warden attendance error:",
-          error
-        );
+        console.error("Warden attendance error:", error);
 
         setError(error.message);
       } finally {
@@ -62,101 +47,59 @@ const WardenAttendance = () => {
   }, [token]);
 
   useEffect(() => {
-    const searchText =
-      search.trim().toLowerCase();
+    const searchText = search.trim().toLowerCase();
 
-    const filtered =
-      attendance.filter((record) => {
-        const matchesSearch =
-          !searchText ||
-          record.student?.name
-            ?.toLowerCase()
-            .includes(searchText) ||
-          record.student?.rollNumber
-            ?.toLowerCase()
-            .includes(searchText) ||
-          record.student?.email
-            ?.toLowerCase()
-            .includes(searchText) ||
-          record.gate?.name
-            ?.toLowerCase()
-            .includes(searchText);
+    const filtered = attendance.filter((record) => {
+      const matchesSearch =
+        !searchText ||
+        record.student?.name?.toLowerCase().includes(searchText) ||
+        record.student?.rollNumber?.toLowerCase().includes(searchText) ||
+        record.student?.email?.toLowerCase().includes(searchText) ||
+        record.gate?.name?.toLowerCase().includes(searchText);
 
-        const matchesAction =
-          actionFilter === "ALL" ||
-          record.action === actionFilter;
+      const matchesAction =
+        actionFilter === "ALL" || record.action === actionFilter;
 
-        const matchesDate =
-          !dateFilter ||
-          new Date(record.timestamp)
-            .toISOString()
-            .slice(0, 10) === dateFilter;
+      const matchesDate =
+        !dateFilter ||
+        new Date(record.timestamp).toISOString().slice(0, 10) === dateFilter;
 
-        return (
-          matchesSearch &&
-          matchesAction &&
-          matchesDate
-        );
-      });
+      return matchesSearch && matchesAction && matchesDate;
+    });
 
     setFilteredAttendance(filtered);
-  }, [
-    search,
-    actionFilter,
-    dateFilter,
-    attendance,
-  ]);
+  }, [search, actionFilter, dateFilter, attendance]);
 
   return (
     <div className="dashboard-page">
-
       {/* ======================================
           HEADER
       ====================================== */}
 
       <header className="dashboard-header">
-
         <div>
-          <h1>
-            Smart Entry-Exit
-          </h1>
+          <h1>Smart Entry-Exit</h1>
 
-          <p>
-            Hostel Attendance
-          </p>
+          <p>Hostel Attendance</p>
         </div>
 
-        <Link
-          to="/warden/dashboard"
-          className="admin-back-link"
-        >
+        <Link to="/warden/dashboard" className="admin-back-link">
           Dashboard
         </Link>
-
       </header>
 
       <main className="dashboard-content">
-
         <section className="history-card">
-
           {/* ==================================
               SECTION HEADER
           ================================== */}
 
           <div className="section-header">
-
             <div>
+              <p className="small-text">Attendance Management</p>
 
-              <p className="small-text">
-                Attendance Management
-              </p>
-
-              <h2>
-                Entry / Exit Records
-              </h2>
-
+              <h2>Entry / Exit Records</h2>
             </div>
-
           </div>
 
           {/* ==================================
@@ -164,173 +107,104 @@ const WardenAttendance = () => {
           ================================== */}
 
           <div className="admin-attendance-filters">
-
             <input
               type="text"
               placeholder="Search student, roll number, email or gate"
               value={search}
-              onChange={(event) =>
-                setSearch(
-                  event.target.value
-                )
-              }
+              onChange={(event) => setSearch(event.target.value)}
             />
 
             <select
               value={actionFilter}
-              onChange={(event) =>
-                setActionFilter(
-                  event.target.value
-                )
-              }
+              onChange={(event) => setActionFilter(event.target.value)}
             >
+              <option value="ALL">All Actions</option>
 
-              <option value="ALL">
-                All Actions
-              </option>
+              <option value="ENTRY">Entry</option>
 
-              <option value="ENTRY">
-                Entry
-              </option>
-
-              <option value="EXIT">
-                Exit
-              </option>
-
+              <option value="EXIT">Exit</option>
             </select>
 
             <input
               type="date"
               value={dateFilter}
-              onChange={(event) =>
-                setDateFilter(
-                  event.target.value
-                )
-              }
+              onChange={(event) => setDateFilter(event.target.value)}
             />
-
           </div>
 
           {/* ==================================
               LOADING
           ================================== */}
 
-          {loading && (
-            <p className="history-empty">
-              Loading attendance...
-            </p>
-          )}
+          {loading && <p className="history-empty">Loading attendance...</p>}
 
           {/* ==================================
               ERROR
           ================================== */}
 
-          {error && (
-            <div className="error-message">
-              {error}
-            </div>
-          )}
+          {error && <div className="error-message">{error}</div>}
 
           {/* ==================================
               EMPTY
           ================================== */}
 
-          {!loading &&
-            !error &&
-            filteredAttendance.length ===
-              0 && (
-              <p className="history-empty">
-                No attendance records found.
-              </p>
-            )}
+          {!loading && !error && filteredAttendance.length === 0 && (
+            <p className="history-empty">No attendance records found.</p>
+          )}
 
           {/* ==================================
               RECORDS
           ================================== */}
 
-          {!loading &&
-            !error &&
-            filteredAttendance.length >
-              0 && (
+          {!loading && !error && filteredAttendance.length > 0 && (
+            <div className="warden-attendance-table-wrapper">
+              <div className="warden-attendance-table">
+                <div className="warden-attendance-header">
+                  <div>Student</div>
+                  <div>Status</div>
+                  <div>Gate</div>
+                  <div>Distance</div>
+                  <div>Time</div>
+                </div>
 
-              <div className="history-list">
+                {filteredAttendance.map((record) => (
+                  <div className="warden-attendance-row" key={record.id}>
+                    <div className="activity-student">
+                      <strong>
+                        {record.student?.name || "Unknown Student"}
+                      </strong>
 
-                {filteredAttendance.map(
-                  (record) => (
-
-                    <div
-                      className="history-item"
-                      key={record.id}
-                    >
-
-                      <div className="history-action">
-
-                        <span
-                          className={`action-badge ${record.action.toLowerCase()}`}
-                        >
-                          {record.action}
-                        </span>
-
-                      </div>
-
-                      <div className="history-details">
-
-                        <h3>
-                          {record.student
-                            ?.name ||
-                            "Unknown Student"}
-                        </h3>
-
-                        <p>
-                          Roll Number:{" "}
-                          {record.student
-                            ?.rollNumber ||
-                            "Unknown"}
-                        </p>
-
-                        <p>
-                          Email:{" "}
-                          {record.student
-                            ?.email ||
-                            "Unknown"}
-                        </p>
-
-                        <p>
-                          Gate:{" "}
-                          {record.gate
-                            ?.name ||
-                            "Unknown Gate"}
-                        </p>
-
-                        <p>
-                          Distance:{" "}
-                          {
-                            record.distanceFromGate
-                          }
-                          m
-                        </p>
-
-                        <p>
-                          {new Date(
-                            record.timestamp
-                          ).toLocaleString()}
-                        </p>
-
-                      </div>
-
+                      <span>
+                        {record.student?.rollNumber || "Unknown Roll Number"}
+                      </span>
                     </div>
 
-                  )
-                )}
+                    <div>
+                      <span
+                        className={`action-badge ${record.action.toLowerCase()}`}
+                      >
+                        {record.action}
+                      </span>
+                    </div>
 
+                    <div className="activity-gate">
+                      {record.gate?.name || "Unknown Gate"}
+                    </div>
+
+                    <div className="warden-attendance-distance">
+                      {record.distanceFromGate}m
+                    </div>
+
+                    <div className="activity-time">
+                      {new Date(record.timestamp).toLocaleString()}
+                    </div>
+                  </div>
+                ))}
               </div>
-
-            )}
-
+            </div>
+          )}
         </section>
-
       </main>
-
     </div>
   );
 };

@@ -184,43 +184,56 @@ const Dashboard = () => {
 
       <main className="dashboard-content">
         <section className="welcome-card">
-          <p className="small-text">Welcome back</p>
+          <div className="welcome-content">
+            <div>
+              <p className="small-text">Welcome back</p>
 
-          <h2>{student?.name}</h2>
+              <h2>{student?.name}</h2>
 
-          <p>Roll Number: {student?.rollNumber}</p>
-        </section>
+              <p>Roll Number: {student?.rollNumber}</p>
+            </div>
 
-        <section className="status-card">
-          <p className="small-text">Current Campus Status</p>
-
-          <div className={`status-indicator ${student?.status?.toLowerCase()}`}>
-            <span className="status-dot"></span>
-
-            <span>{student?.status}</span>
+            <div className="welcome-role">Student</div>
           </div>
-
-          <p>
-            Your status will automatically update when you scan a gate QR code.
-          </p>
         </section>
 
-        <section className="scan-card">
-          <h2>Mark Entry / Exit</h2>
+        <div className="student-action-grid">
+          <section className="status-card">
+            <p className="small-text">Current Campus Status</p>
 
-          <p>Scan the QR code displayed at the gate to continue.</p>
+            <div
+              className={`status-indicator ${student?.status?.toLowerCase()}`}
+            >
+              <span className="status-dot"></span>
 
-          <button
-            className="scan-button"
-            onClick={() => {
-              setScanError("");
-              setScannedGate(null);
-              setScannerOpen(true);
-            }}
-          >
-            Scan QR Code
-          </button>
-        </section>
+              <span>{student?.status}</span>
+            </div>
+
+            <p>
+              Your status will automatically update when you scan a gate QR
+              code.
+            </p>
+          </section>
+
+          <section className="scan-card">
+            <p className="small-text">Quick Action</p>
+
+            <h2>Mark Entry / Exit</h2>
+
+            <p>Scan the QR code displayed at the gate to continue.</p>
+
+            <button
+              className="scan-button"
+              onClick={() => {
+                setScanError("");
+                setScannedGate(null);
+                setScannerOpen(true);
+              }}
+            >
+              Scan QR Code
+            </button>
+          </section>
+        </div>
 
         <section className="history-card">
           <div className="section-header">
@@ -244,28 +257,37 @@ const Dashboard = () => {
             )}
 
           {!historyLoading && attendanceHistory.length > 0 && (
-            <div className="history-list">
-              {attendanceHistory.map((record) => (
-                <div className="history-item" key={record.id}>
-                  <div className="history-action">
-                    <span
-                      className={`action-badge ${record.action.toLowerCase()}`}
-                    >
-                      {record.action}
-                    </span>
-                  </div>
-
-                  <div className="history-details">
-                    <h3>{record.gate}</h3>
-
-                    <p>{new Date(record.timestamp).toLocaleString()}</p>
-                  </div>
-
-                  <div className="history-distance">
-                    {record.distanceFromGate}m
-                  </div>
+            <div className="student-history-table-wrapper">
+              <div className="student-history-table">
+                <div className="student-history-header">
+                  <div>Date / Time</div>
+                  <div>Action</div>
+                  <div>Gate</div>
+                  <div>Distance</div>
                 </div>
-              ))}
+
+                {attendanceHistory.map((record) => (
+                  <div className="student-history-row" key={record.id}>
+                    <div className="student-history-time">
+                      {new Date(record.timestamp).toLocaleString()}
+                    </div>
+
+                    <div>
+                      <span
+                        className={`action-badge ${record.action.toLowerCase()}`}
+                      >
+                        {record.action}
+                      </span>
+                    </div>
+
+                    <div className="student-history-gate">{record.gate}</div>
+
+                    <div className="student-history-distance">
+                      {record.distanceFromGate}m
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </section>

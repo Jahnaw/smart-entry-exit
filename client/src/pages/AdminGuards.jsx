@@ -2,32 +2,22 @@ import { useEffect, useState } from "react";
 
 import { useAuth } from "../context/AuthContext";
 
-import {
-  createGuard,
-  getAllGuards,
-  deleteGuard,
-} from "../services/api";
+import { createGuard, getAllGuards, deleteGuard } from "../services/api";
 
 const AdminGuards = () => {
   const { token } = useAuth();
 
-  const [guards, setGuards] =
-    useState([]);
+  const [guards, setGuards] = useState([]);
 
-  const [loadingGuards, setLoadingGuards] =
-    useState(true);
+  const [loadingGuards, setLoadingGuards] = useState(true);
 
-  const [loading, setLoading] =
-    useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const [deletingId, setDeletingId] =
-    useState(null);
+  const [deletingId, setDeletingId] = useState(null);
 
-  const [error, setError] =
-    useState("");
+  const [error, setError] = useState("");
 
-  const [success, setSuccess] =
-    useState("");
+  const [success, setSuccess] = useState("");
 
   const [form, setForm] = useState({
     name: "",
@@ -44,17 +34,11 @@ const AdminGuards = () => {
     try {
       setLoadingGuards(true);
 
-      const data =
-        await getAllGuards(token);
+      const data = await getAllGuards(token);
 
-      setGuards(
-        data.guards || []
-      );
+      setGuards(data.guards || []);
     } catch (error) {
-      console.error(
-        "Load guards error:",
-        error
-      );
+      console.error("Load guards error:", error);
 
       setError(error.message);
     } finally {
@@ -75,26 +59,19 @@ const AdminGuards = () => {
   // ==========================================
 
   const handleChange = (event) => {
-    const {
-      name,
-      value,
-    } = event.target;
+    const { name, value } = event.target;
 
-    setForm(
-      (currentForm) => ({
-        ...currentForm,
-        [name]: value,
-      })
-    );
+    setForm((currentForm) => ({
+      ...currentForm,
+      [name]: value,
+    }));
   };
 
   // ==========================================
   // CREATE GUARD
   // ==========================================
 
-  const handleSubmit = async (
-    event
-  ) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     setError("");
@@ -103,19 +80,15 @@ const AdminGuards = () => {
     try {
       setLoading(true);
 
-      const data =
-        await createGuard({
-          token,
-          name: form.name,
-          email: form.email,
-          password:
-            form.password,
-          phone: form.phone,
-        });
+      const data = await createGuard({
+        token,
+        name: form.name,
+        email: form.email,
+        password: form.password,
+        phone: form.phone,
+      });
 
-      setSuccess(
-        `Guard ${data.guard.name} created successfully.`
-      );
+      setSuccess(`Guard ${data.guard.name} created successfully.`);
 
       setForm({
         name: "",
@@ -126,10 +99,7 @@ const AdminGuards = () => {
 
       await loadGuards();
     } catch (error) {
-      console.error(
-        "Create guard error:",
-        error
-      );
+      console.error("Create guard error:", error);
 
       setError(error.message);
     } finally {
@@ -141,13 +111,10 @@ const AdminGuards = () => {
   // DELETE GUARD
   // ==========================================
 
-  const handleDelete = async (
-    guard
-  ) => {
-    const confirmed =
-      window.confirm(
-        `Are you sure you want to remove ${guard.name}?`
-      );
+  const handleDelete = async (guard) => {
+    const confirmed = window.confirm(
+      `Are you sure you want to remove ${guard.name}?`,
+    );
 
     if (!confirmed) {
       return;
@@ -157,31 +124,20 @@ const AdminGuards = () => {
     setSuccess("");
 
     try {
-      setDeletingId(
-        guard.id
-      );
+      setDeletingId(guard.id);
 
       await deleteGuard({
         token,
         id: guard.id,
       });
 
-      setSuccess(
-        `${guard.name} was removed successfully.`
-      );
+      setSuccess(`${guard.name} was removed successfully.`);
 
-      setGuards(
-        (currentGuards) =>
-          currentGuards.filter(
-            (item) =>
-              item.id !== guard.id
-          )
+      setGuards((currentGuards) =>
+        currentGuards.filter((item) => item.id !== guard.id),
       );
     } catch (error) {
-      console.error(
-        "Delete guard error:",
-        error
-      );
+      console.error("Delete guard error:", error);
 
       setError(error.message);
     } finally {
@@ -191,77 +147,43 @@ const AdminGuards = () => {
 
   return (
     <div className="dashboard-page">
-
       {/* ======================================
           HEADER
       ====================================== */}
 
       <header className="dashboard-header">
-
         <div>
-          <h1>
-            Smart Entry-Exit
-          </h1>
+          <h1>Smart Entry-Exit</h1>
 
-          <p>
-            Guard Management
-          </p>
+          <p>Guard Management</p>
         </div>
 
-        <a
-          href="/admin/dashboard"
-          className="admin-back-link"
-        >
+        <a href="/admin/dashboard" className="admin-back-link">
           Dashboard
         </a>
-
       </header>
 
       <main className="dashboard-content">
-
         {/* ======================================
             CREATE GUARD
         ====================================== */}
 
         <section className="history-card">
-
           <div className="section-header">
-
             <div>
+              <p className="small-text">Administration</p>
 
-              <p className="small-text">
-                Administration
-              </p>
-
-              <h2>
-                Create Guard
-              </h2>
-
+              <h2>Create Guard</h2>
             </div>
-
           </div>
 
-          {error && (
-            <div className="error-message">
-              {error}
-            </div>
-          )}
+          {error && <div className="error-message">{error}</div>}
 
-          {success && (
-            <div className="success-message">
-              {success}
-            </div>
-          )}
+          {success && <div className="success-message">{success}</div>}
 
-          <form
-            onSubmit={handleSubmit}
-          >
-
-            <div className="form-group">
-
-              <label htmlFor="name">
-                Full Name
-              </label>
+          <form onSubmit={handleSubmit} className="guard-form">
+            <div className="guard-form-group">
+              <label htmlFor="name">Full Name</label>
 
               <input
                 id="name"
@@ -269,19 +191,13 @@ const AdminGuards = () => {
                 type="text"
                 placeholder="Enter guard name"
                 value={form.name}
-                onChange={
-                  handleChange
-                }
+                onChange={handleChange}
                 required
               />
-
             </div>
 
-            <div className="form-group">
-
-              <label htmlFor="email">
-                Email
-              </label>
+            <div className="guard-form-group">
+              <label htmlFor="email">Email</label>
 
               <input
                 id="email"
@@ -289,19 +205,13 @@ const AdminGuards = () => {
                 type="email"
                 placeholder="Enter guard email"
                 value={form.email}
-                onChange={
-                  handleChange
-                }
+                onChange={handleChange}
                 required
               />
-
             </div>
 
-            <div className="form-group">
-
-              <label htmlFor="phone">
-                Phone Number
-              </label>
+            <div className="guard-form-group">
+              <label htmlFor="phone">Phone Number</label>
 
               <input
                 id="phone"
@@ -309,18 +219,12 @@ const AdminGuards = () => {
                 type="tel"
                 placeholder="Enter phone number"
                 value={form.phone}
-                onChange={
-                  handleChange
-                }
+                onChange={handleChange}
               />
-
             </div>
 
-            <div className="form-group">
-
-              <label htmlFor="password">
-                Password
-              </label>
+            <div className="guard-form-group">
+              <label htmlFor="password">Password</label>
 
               <input
                 id="password"
@@ -328,27 +232,22 @@ const AdminGuards = () => {
                 type="password"
                 placeholder="Create password"
                 value={form.password}
-                onChange={
-                  handleChange
-                }
+                onChange={handleChange}
                 minLength={8}
                 required
               />
-
             </div>
 
-            <button
-              type="submit"
-              className="primary-button"
-              disabled={loading}
-            >
-              {loading
-                ? "Creating Guard..."
-                : "Create Guard"}
-            </button>
-
+            <div className="guard-form-actions">
+              <button
+                type="submit"
+                className="primary-button"
+                disabled={loading}
+              >
+                {loading ? "Creating Guard..." : "Create Guard"}
+              </button>
+            </div>
           </form>
-
         </section>
 
         {/* ======================================
@@ -356,107 +255,62 @@ const AdminGuards = () => {
         ====================================== */}
 
         <section className="history-card">
-
           <div className="section-header">
-
             <div>
+              <p className="small-text">Administration</p>
 
-              <p className="small-text">
-                Administration
-              </p>
-
-              <h2>
-                Existing Guards
-              </h2>
-
+              <h2>Existing Guards</h2>
             </div>
-
           </div>
 
-          {loadingGuards && (
-            <p className="history-empty">
-              Loading guards...
-            </p>
+          {loadingGuards && <p className="history-empty">Loading guards...</p>}
+
+          {!loadingGuards && guards.length === 0 && (
+            <p className="history-empty">No guards have been created yet.</p>
           )}
 
-          {!loadingGuards &&
-            guards.length === 0 && (
-              <p className="history-empty">
-                No guards have been
-                created yet.
-              </p>
-            )}
+          {!loadingGuards && guards.length > 0 && (
+            <div className="admin-guards-table-wrapper">
+              <div className="admin-guards-table">
+                <div className="admin-guards-header">
+                  <div>Guard</div>
+                  <div>Email</div>
+                  <div>Phone</div>
+                  <div>Role</div>
+                  <div>Action</div>
+                </div>
 
-          {!loadingGuards &&
-            guards.length > 0 && (
-
-              <div className="history-list">
-
-                {guards.map(
-                  (guard) => (
-
-                    <div
-                      className="history-item"
-                      key={guard.id}
-                    >
-
-                      <div className="history-details">
-
-                        <h3>
-                          {guard.name}
-                        </h3>
-
-                        <p>
-                          Email:{" "}
-                          {guard.email}
-                        </p>
-
-                        {guard.phone && (
-                          <p>
-                            Phone:{" "}
-                            {guard.phone}
-                          </p>
-                        )}
-
-                        <p>
-                          Role:{" "}
-                          {guard.role}
-                        </p>
-
-                      </div>
-
-                      <div className="history-action">
-
-                        <button
-                          type="button"
-                          className="logout-button"
-                          onClick={() =>
-                            handleDelete(
-                              guard
-                            )
-                          }
-                          disabled={
-                            deletingId ===
-                            guard.id
-                          }
-                        >
-                          {deletingId ===
-                          guard.id
-                            ? "Removing..."
-                            : "Remove"}
-                        </button>
-
-                      </div>
-
+                {guards.map((guard) => (
+                  <div className="admin-guards-row" key={guard.id}>
+                    <div className="admin-guard-name">
+                      <strong>{guard.name}</strong>
                     </div>
 
-                  )
-                )}
+                    <div className="admin-guard-email">{guard.email}</div>
 
+                    <div className="admin-guard-phone">
+                      {guard.phone || "—"}
+                    </div>
+
+                    <div>
+                      <span className="guard-role-badge">{guard.role}</span>
+                    </div>
+
+                    <div>
+                      <button
+                        type="button"
+                        className="guard-remove-button"
+                        onClick={() => handleDelete(guard)}
+                        disabled={deletingId === guard.id}
+                      >
+                        {deletingId === guard.id ? "Removing..." : "Remove"}
+                      </button>
+                    </div>
+                  </div>
+                ))}
               </div>
-
-            )}
-
+            </div>
+          )}
         </section>
 
         {/* ======================================
@@ -464,61 +318,27 @@ const AdminGuards = () => {
         ====================================== */}
 
         <section className="history-card">
-
           <div className="section-header">
-
             <div>
+              <p className="small-text">Access Control</p>
 
-              <p className="small-text">
-                Access Control
-              </p>
-
-              <h2>
-                Guard Permissions
-              </h2>
-
+              <h2>Guard Permissions</h2>
             </div>
-
           </div>
 
           <div className="admin-info-list">
+            <p>• Guards can search for active hostels.</p>
 
-            <p>
-              • Guards can search
-              for active hostels.
-            </p>
+            <p>• Guards can view students belonging to the selected hostel.</p>
 
-            <p>
-              • Guards can view
-              students belonging
-              to the selected
-              hostel.
-            </p>
+            <p>• Guards can view student entry and exit status.</p>
 
-            <p>
-              • Guards can view
-              student entry and
-              exit status.
-            </p>
+            <p>• Guards do not require device verification.</p>
 
-            <p>
-              • Guards do not
-              require device
-              verification.
-            </p>
-
-            <p>
-              • Only Admin can
-              create or remove
-              Guards.
-            </p>
-
+            <p>• Only Admin can create or remove Guards.</p>
           </div>
-
         </section>
-
       </main>
-
     </div>
   );
 };

@@ -91,29 +91,39 @@ const WardenDashboard = () => {
         ====================================== */}
 
         <section className="welcome-card">
-          <p className="small-text">Welcome</p>
+          <div className="welcome-content">
+            <div>
+              <p className="small-text">Welcome back</p>
 
-          <h2>{student?.name || dashboard?.warden?.name}</h2>
+              <h2>{student?.name || dashboard?.warden?.name}</h2>
 
-          <p>Warden</p>
+              <p>
+                {dashboard?.hostel?.name
+                  ? `Managing ${dashboard.hostel.name}`
+                  : "Warden"}
+              </p>
+            </div>
+
+            <div className="welcome-role">Warden</div>
+          </div>
         </section>
 
         {/* ======================================
             HOSTEL
         ====================================== */}
 
-        <section className="history-card">
-          <div className="section-header">
-            <div>
-              <p className="small-text">Assigned Hostel</p>
+        <section className="hostel-info-card">
+          <div>
+            <p className="small-text">Assigned Hostel</p>
 
-              <h2>{dashboard?.hostel?.name}</h2>
-            </div>
+            <h2>{dashboard?.hostel?.name}</h2>
+
+            <p className="hostel-code">
+              Hostel Code: <strong>{dashboard?.hostel?.code}</strong>
+            </p>
           </div>
 
-          <p>
-            Hostel Code: <strong>{dashboard?.hostel?.code}</strong>
-          </p>
+          <div className="hostel-badge">Assigned</div>
         </section>
 
         {/* ======================================
@@ -188,28 +198,45 @@ const WardenDashboard = () => {
           )}
 
           {dashboard?.recentActivity?.length > 0 && (
-            <div className="history-list">
-              {dashboard.recentActivity.map((record) => (
-                <div className="history-item" key={record._id}>
-                  <div className="history-action">
-                    <span
-                      className={`action-badge ${record.action.toLowerCase()}`}
-                    >
-                      {record.action}
-                    </span>
-                  </div>
-
-                  <div className="history-details">
-                    <h3>{record.student?.name || "Unknown Student"}</h3>
-
-                    <p>{record.student?.rollNumber || "Unknown Roll Number"}</p>
-
-                    <p>Gate: {record.gate?.name || "Unknown Gate"}</p>
-
-                    <p>{new Date(record.timestamp).toLocaleString()}</p>
-                  </div>
+            <div className="activity-table-wrapper">
+              <div className="activity-table">
+                <div className="activity-table-header">
+                  <div>Student</div>
+                  <div>Status</div>
+                  <div>Gate</div>
+                  <div>Time</div>
                 </div>
-              ))}
+
+                {dashboard.recentActivity.map((record) => (
+                  <div className="activity-table-row" key={record._id}>
+                    <div className="activity-student">
+                      <strong>
+                        {record.student?.name || "Unknown Student"}
+                      </strong>
+
+                      <span>
+                        {record.student?.rollNumber || "Unknown Roll Number"}
+                      </span>
+                    </div>
+
+                    <div>
+                      <span
+                        className={`action-badge ${record.action.toLowerCase()}`}
+                      >
+                        {record.action}
+                      </span>
+                    </div>
+
+                    <div className="activity-gate">
+                      {record.gate?.name || "Unknown Gate"}
+                    </div>
+
+                    <div className="activity-time">
+                      {new Date(record.timestamp).toLocaleString()}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </section>

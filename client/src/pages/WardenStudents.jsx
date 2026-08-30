@@ -7,20 +7,15 @@ import { getWardenStudents } from "../services/api";
 const WardenStudents = () => {
   const { token } = useAuth();
 
-  const [students, setStudents] =
-    useState([]);
+  const [students, setStudents] = useState([]);
 
-  const [filteredStudents, setFilteredStudents] =
-    useState([]);
+  const [filteredStudents, setFilteredStudents] = useState([]);
 
-  const [search, setSearch] =
-    useState("");
+  const [search, setSearch] = useState("");
 
-  const [loading, setLoading] =
-    useState(true);
+  const [loading, setLoading] = useState(true);
 
-  const [error, setError] =
-    useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const loadStudents = async () => {
@@ -28,21 +23,13 @@ const WardenStudents = () => {
         setLoading(true);
         setError("");
 
-        const data =
-          await getWardenStudents(token);
+        const data = await getWardenStudents(token);
 
-        setStudents(
-          data.students || []
-        );
+        setStudents(data.students || []);
 
-        setFilteredStudents(
-          data.students || []
-        );
+        setFilteredStudents(data.students || []);
       } catch (error) {
-        console.error(
-          "Warden students error:",
-          error
-        );
+        console.error("Warden students error:", error);
 
         setError(error.message);
       } finally {
@@ -56,167 +43,101 @@ const WardenStudents = () => {
   }, [token]);
 
   useEffect(() => {
-    const searchText =
-      search.trim().toLowerCase();
+    const searchText = search.trim().toLowerCase();
 
-    const filtered =
-      students.filter((student) => {
-        return (
-          !searchText ||
-          student.name
-            ?.toLowerCase()
-            .includes(searchText) ||
-          student.rollNumber
-            ?.toLowerCase()
-            .includes(searchText) ||
-          student.email
-            ?.toLowerCase()
-            .includes(searchText)
-        );
-      });
+    const filtered = students.filter((student) => {
+      return (
+        !searchText ||
+        student.name?.toLowerCase().includes(searchText) ||
+        student.rollNumber?.toLowerCase().includes(searchText) ||
+        student.email?.toLowerCase().includes(searchText)
+      );
+    });
 
     setFilteredStudents(filtered);
   }, [search, students]);
 
   return (
     <div className="dashboard-page">
-
       <header className="dashboard-header">
         <div>
-          <h1>
-            Smart Entry-Exit
-          </h1>
+          <h1>Smart Entry-Exit</h1>
 
-          <p>
-            Hostel Students
-          </p>
+          <p>Hostel Students</p>
         </div>
 
-        <Link
-          to="/warden/dashboard"
-          className="admin-back-link"
-        >
+        <Link to="/warden/dashboard" className="admin-back-link">
           Dashboard
         </Link>
       </header>
 
       <main className="dashboard-content">
-
         <section className="history-card">
-
           <div className="section-header">
             <div>
-              <p className="small-text">
-                Student Management
-              </p>
+              <p className="small-text">Student Management</p>
 
-              <h2>
-                Hostel Students
-              </h2>
+              <h2>Hostel Students</h2>
             </div>
           </div>
 
           <div className="admin-attendance-filters">
-
             <input
               type="text"
               placeholder="Search name, roll number or email"
               value={search}
-              onChange={(event) =>
-                setSearch(
-                  event.target.value
-                )
-              }
+              onChange={(event) => setSearch(event.target.value)}
             />
-
           </div>
 
-          {loading && (
-            <p className="history-empty">
-              Loading students...
-            </p>
+          {loading && <p className="history-empty">Loading students...</p>}
+
+          {error && <div className="error-message">{error}</div>}
+
+          {!loading && !error && filteredStudents.length === 0 && (
+            <p className="history-empty">No students found.</p>
           )}
 
-          {error && (
-            <div className="error-message">
-              {error}
-            </div>
-          )}
+          {!loading && !error && filteredStudents.length > 0 && (
+            <div className="student-management-table-wrapper">
+              <div className="student-management-table">
+                <div className="student-management-header">
+                  <div>Student</div>
+                  <div>Roll Number</div>
+                  <div>Status</div>
+                  <div>Email</div>
+                </div>
 
-          {!loading &&
-            !error &&
-            filteredStudents.length === 0 && (
-              <p className="history-empty">
-                No students found.
-              </p>
-            )}
-
-          {!loading &&
-            !error &&
-            filteredStudents.length > 0 && (
-
-              <div className="history-list">
-
-                {filteredStudents.map(
-                  (student) => (
-
-                    <div
-                      className="history-item"
-                      key={student._id}
-                    >
-
-                      <div className="history-action">
-
-                        <span
-                          className={`action-badge ${
-                            student.status ===
-                            "INSIDE"
-                              ? "entry"
-                              : "exit"
-                          }`}
-                        >
-                          {student.status}
-                        </span>
-
-                      </div>
-
-                      <div className="history-details">
-
-                        <h3>
-                          {student.name}
-                        </h3>
-
-                        <p>
-                          Roll Number:{" "}
-                          {student.rollNumber}
-                        </p>
-
-                        <p>
-                          Email:{" "}
-                          {student.email}
-                        </p>
-
-                        <p>
-                          Hostel:{" "}
-                          {student.hostelId?.name ||
-                            "Unknown Hostel"}
-                        </p>
-
-                      </div>
-
+                {filteredStudents.map((student) => (
+                  <div className="student-management-row" key={student._id}>
+                    <div className="student-management-name">
+                      <strong>{student.name}</strong>
                     </div>
 
-                  )
-                )}
+                    <div className="student-management-roll">
+                      {student.rollNumber}
+                    </div>
 
+                    <div>
+                      <span
+                        className={`action-badge ${
+                          student.status === "INSIDE" ? "entry" : "exit"
+                        }`}
+                      >
+                        {student.status}
+                      </span>
+                    </div>
+
+                    <div className="student-management-email">
+                      {student.email}
+                    </div>
+                  </div>
+                ))}
               </div>
-
-            )}
-
+            </div>
+          )}
         </section>
-
       </main>
-
     </div>
   );
 };
