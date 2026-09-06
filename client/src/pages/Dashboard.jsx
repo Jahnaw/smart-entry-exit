@@ -12,6 +12,7 @@ import {
 } from "../services/api";
 
 import { getCurrentLocation } from "../services/location";
+import "../styles/dashboard.css";
 
 const Dashboard = () => {
   const { student, logout, token, deviceToken, updateStudentStatus } =
@@ -196,6 +197,16 @@ const Dashboard = () => {
     }
   };
 
+  const getInitials = (name) => {
+    if (!name) return "ST";
+    return name
+      .split(" ")
+      .map((part) => part[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
   if (scannerOpen) {
     return (
       <QRScanner
@@ -206,170 +217,205 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="dashboard-page">
-      <header className="dashboard-header">
-        <div>
-          <h1>Smart Entry-Exit</h1>
-
-          <p>Student Dashboard</p>
+    <div className="dashboard-app">
+      {/* ========================================================
+          1. LEFT SIDEBAR NAVIGATION (Matching Architecture)
+          ======================================================== */}
+      <aside className="dashboard-sidebar">
+        {/* Top Header Banner matching reference's purple/blue header */}
+        <div className="sidebar-header-banner">
+          <div className="sidebar-logo-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <rect width="7" height="7" x="3" y="3" rx="1.5"/>
+              <rect width="7" height="7" x="14" y="3" rx="1.5"/>
+              <rect width="7" height="7" x="14" y="14" rx="1.5"/>
+              <rect width="7" height="7" x="3" y="14" rx="1.5"/>
+            </svg>
+          </div>
+          <h2 className="sidebar-brand-title">SmartEntry</h2>
         </div>
 
-        <button className="logout-button" onClick={logout}>
-          Logout
-        </button>
-      </header>
-
-      <main className="dashboard-content">
-        <section className="welcome-card">
-          <div className="welcome-content">
-            <div>
-              <p className="small-text">Welcome back</p>
-
-              <h2>{student?.name}</h2>
-
-              <p>Roll Number: {student?.rollNumber}</p>
-            </div>
-
-            <div className="welcome-role">Student</div>
+        {/* User Profile Card */}
+        <div className="sidebar-user-card">
+          <div className="user-avatar-circle">
+            {getInitials(student?.name)}
           </div>
-        </section>
+          <h3 className="user-display-name">{student?.name || "Student User"}</h3>
+          <p className="user-subinfo">Roll: {student?.rollNumber || "N/A"}</p>
+          <span className="user-role-badge">Verified Student</span>
+        </div>
 
-        <div className="student-action-grid">
-          <section className="status-card">
-            <p className="small-text">Current Campus Status</p>
+      </aside>
 
-            <div
-              className={`status-indicator ${student?.status?.toLowerCase()}`}
-            >
-              <span className="status-dot"></span>
+      {/* ========================================================
+          2. MAIN DASHBOARD CONTENT AREA
+          ======================================================== */}
+      <main className="dashboard-main-area">
+        {/* Top Header Bar */}
+        <header className="dashboard-topbar">
+          <div className="topbar-left">
+            <h1 className="topbar-title">Dashboard</h1>
+            <p className="topbar-motto">Campus Entry & Exit Monitoring • Together everyone achieves more</p>
+          </div>
 
-              <span>{student?.status}</span>
+          <div className="topbar-actions">
+            <div className={`header-status-badge ${student?.status?.toLowerCase() === "inside" ? "inside" : "outside"}`}>
+              <span className="pulse-dot"></span>
+              {student?.status === "INSIDE" ? "Inside Campus" : "Outside Campus"}
             </div>
 
-            <p>
-              Your status will automatically update when you scan a gate QR
-              code.
-            </p>
-          </section>
-
-          <section className="scan-card">
-            <p className="small-text">Quick Action</p>
-
-            <h2>Mark Entry / Exit</h2>
-
-            <p>Scan the QR code displayed at the gate to continue.</p>
-
-            <button
-              className="scan-button"
-              onClick={() => {
-                setScanError("");
-                setScannedGate(null);
-                setScannerOpen(true);
-              }}
-            >
-              Scan QR Code
+            <button className="icon-btn" title="Notifications">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
+                <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+              </svg>
+              <span className="notif-badge"></span>
             </button>
-          </section>
-        </div>
 
-        <section className="history-card">
-          <div className="section-header">
-            <div>
-              <p className="small-text">Activity</p>
-
-              <h2>Recent Attendance</h2>
-            </div>
+            <button className="icon-btn" onClick={logout} title="Sign Out">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                <polyline points="16 17 21 12 16 7"/>
+                <line x1="21" x2="9" y1="12" y2="12"/>
+              </svg>
+            </button>
           </div>
+        </header>
 
-          {historyLoading && (
-            <p className="history-empty">Loading attendance...</p>
-          )}
+        {/* Dashboard Body Container */}
+        <div className="dashboard-body-container">
+          {/* ========================================================
+              3. TOP KPI / METRIC CARDS ROW (4 Cards Architecture)
+              ======================================================== */}
+          <section className="kpi-cards-grid">
+            {/* Current status with embedded scanner action */}
+            <div className="kpi-card highlight">
+              <div className="kpi-info">
+                <span className="kpi-label">CURRENT STATUS</span>
+                <span className="kpi-value">{student?.status || "INSIDE"}</span>
+                <span className="kpi-subtext">Live campus status</span>
+              </div>
+              <button
+                className="kpi-scan-button"
+                title="Scan gate QR"
+                onClick={() => {
+                  setScanError("");
+                  setScannedGate(null);
+                  setScannerOpen(true);
+                }}
+              >
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 7V5a2 2 0 0 1 2-2h2"/>
+                  <path d="M17 3h2a2 2 0 0 1 2 2v2"/>
+                  <path d="M21 17v2a2 2 0 0 1-2 2h-2"/>
+                  <path d="M7 21H5a2 2 0 0 1-2-2v-2"/>
+                </svg>
+                <span>Scan</span>
+              </button>
+            </div>
+          </section>
 
-          {historyError && (
-            <div className="error-message">{historyError}</div>
-          )}
-
-          {!historyLoading &&
-            !historyError &&
-            attendanceHistory.length === 0 && (
-              <p className="history-empty">No attendance records yet.</p>
-            )}
-
-          {!historyLoading && attendanceHistory.length > 0 && (
-            <div className="student-history-table-wrapper">
-              <div className="student-history-table">
-                <div className="student-history-header">
-                  <div>Date / Time</div>
-
-                  <div>Action</div>
-
-                  <div>Gate</div>
-
-                  <div>Distance</div>
+          {/* ========================================================
+              4. TWO-COLUMN MAIN CONTENT (Matching Architecture)
+              ======================================================== */}
+          <section className="content-columns-grid">
+            {/* Left Main Column (2/3 width) */}
+            <div className="left-main-column">
+              <div className="content-panel" id="recent-activity-panel">
+                {/* Quick Scan Action Banner */}
+                <div className="quick-scan-banner">
+                  <div className="scan-banner-info">
+                    <h3>Mark Campus Entry or Exit</h3>
+                    <p>Scan the dynamic QR code displayed at any campus gate to verify location and register entry/exit.</p>
+                  </div>
                 </div>
 
-                {attendanceHistory.map((record) => (
-                  <div className="student-history-row" key={record.id}>
-                    <div className="student-history-time">
-                      {new Date(record.timestamp).toLocaleString()}
-                    </div>
+                {/* Real-time feedback alerts */}
+                {loadingGate && (
+                  <div className="status-feedback-banner loading">
+                    <span className="pulse-dot"></span>
+                    <span>{locationStatus || "Verifying gate location..."}</span>
+                  </div>
+                )}
 
+                {scanError && (
+                  <div className="status-feedback-banner error">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10"/>
+                      <line x1="12" x2="12" y1="8" y2="12"/>
+                      <line x1="12" x2="12.01" y1="16" y2="16"/>
+                    </svg>
+                    <span>{scanError}</span>
+                  </div>
+                )}
+
+                {scannedGate && (
+                  <div className="status-feedback-banner success">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                      <polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
                     <div>
-                      <span
-                        className={`action-badge ${record.action.toLowerCase()}`}
-                      >
-                        {record.action}
-                      </span>
-                    </div>
-
-                    <div className="student-history-gate">
-                      {record.gate}
-                    </div>
-
-                    <div className="student-history-distance">
-                      {record.distanceFromGate}m
+                      <strong>{scannedGate.name} ({scannedGate.action})</strong> — Marked successfully! Distance: {scannedGate.distance}m
                     </div>
                   </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </section>
+                )}
 
-        {loadingGate && (
-          <section className="result-card">
-            <p>{locationStatus}</p>
-          </section>
-        )}
-
-        {scanError && (
-          <section className="result-card">
-            <div className="error-message">{scanError}</div>
-          </section>
-        )}
-
-        {scannedGate && (
-          <section className="result-card">
-            <p className="small-text">Gate</p>
-
-            <h2>{scannedGate.name}</h2>
-
-            <p>Distance from gate: {scannedGate.distance} meters</p>
-
-            {scannedGate.attendanceMarked && (
-              <>
-                <div className="success-message">
-                  ✓ {scannedGate.action} marked successfully
+                {/* Table Header matching "Last orders" */}
+                <div className="panel-header">
+                  <h3 className="panel-title">Recent Gate Activity</h3>
+                  <span className="panel-filter-label">Last 7 days • Live Log</span>
                 </div>
 
-                <p>
-                  Time:{" "}
-                  {new Date(scannedGate.timestamp).toLocaleString()}
-                </p>
-              </>
-            )}
+                {/* Data Table */}
+                <div className="table-responsive-wrapper">
+                  {historyLoading ? (
+                    <div className="empty-table-state">Loading attendance records...</div>
+                  ) : historyError ? (
+                    <div className="empty-table-state" style={{ color: "#EF4444" }}>{historyError}</div>
+                  ) : attendanceHistory.length === 0 ? (
+                    <div className="empty-table-state">No attendance records found. Scan a gate QR code to record your first entry.</div>
+                  ) : (
+                    <table className="custom-data-table">
+                      <thead>
+                        <tr>
+                          <th>Date & Time</th>
+                          <th>Action</th>
+                          <th>Gate</th>
+                          <th>Distance</th>
+                          <th>Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {attendanceHistory.map((record) => (
+                          <tr key={record.id}>
+                            <td>{new Date(record.timestamp).toLocaleString()}</td>
+                            <td>
+                              <span className={`table-action-pill ${record.action?.toLowerCase()}`}>
+                                {record.action}
+                              </span>
+                            </td>
+                            <td>{record.gate}</td>
+                            <td>{record.distanceFromGate}m</td>
+                            <td>
+                              <span className="table-status-check">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                  <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                                Verified
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
+                </div>
+              </div>
+            </div>
+
           </section>
-        )}
+        </div>
       </main>
     </div>
   );

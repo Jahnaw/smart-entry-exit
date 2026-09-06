@@ -1,20 +1,18 @@
 import { useEffect, useState } from "react";
-
 import { useAuth } from "../context/AuthContext";
 import { getGuardHostels, getGuardHostelStudents } from "../services/api";
+import AdminShell from "../components/AdminShell";
+import "../styles/admin.css";
 
 const GuardDashboard = () => {
-  const { token, student, logout } = useAuth();
+  const { token, student } = useAuth();
 
   const [hostels, setHostels] = useState([]);
   const [selectedHostel, setSelectedHostel] = useState("");
 
   const [hostelData, setHostelData] = useState(null);
-
   const [loadingHostels, setLoadingHostels] = useState(true);
-
   const [loadingStudents, setLoadingStudents] = useState(false);
-
   const [error, setError] = useState("");
 
   // ==========================================
@@ -75,60 +73,61 @@ const GuardDashboard = () => {
   };
 
   return (
-    <div className="dashboard-page">
-      {/* =========================
-          HEADER
-      ========================= */}
+    <AdminShell
+      title="Guard Checkpoint"
+      subtitle="Security Checkpoint / Hostel Resident Verification"
+      portalType="guard"
+    >
+      {/* Welcome Banner */}
+      <div className="admin-welcome-banner">
+        <div className="admin-welcome-text">
+          <h2>Security Station: {student?.name || "Campus Guard"}</h2>
+          <p>Verify hostel resident clearance and monitor real-time entry and exit status.</p>
+        </div>
+        <div className="admin-welcome-badge">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
+            <path d="m9 12 2 2 4-4" />
+          </svg>
+          <span>Gate Security Active</span>
+        </div>
+      </div>
 
-      <header className="dashboard-header">
-        <div>
-          <h1>Smart Entry-Exit</h1>
+      {error && (
+        <div className="admin-alert-error">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" x2="12" y1="8" y2="12" />
+            <line x1="12" x2="12" y1="16" y2="16.01" />
+          </svg>
+          <span>{error}</span>
+        </div>
+      )}
 
-          <p>Guard Dashboard</p>
+      {/* HOSTEL SELECTOR PANEL */}
+      <div className="admin-panel">
+        <div className="admin-panel-header">
+          <div className="admin-panel-title-area">
+            <span className="admin-panel-eyebrow">Checkpoint Configuration</span>
+            <h3 className="admin-panel-title">Select Inspection Hostel</h3>
+          </div>
         </div>
 
-        <button className="logout-button" onClick={logout}>
-          Logout
-        </button>
-      </header>
-
-      <main className="dashboard-content">
-        {/* =========================
-            WELCOME
-        ========================= */}
-
-        <section className="welcome-card">
-          <p className="small-text">Welcome</p>
-
-          <h2>{student?.name}</h2>
-
-          <p>Campus Guard</p>
-        </section>
-
-        {/* =========================
-            HOSTEL SELECTION
-        ========================= */}
-
-        <section className="history-card">
-          <div className="section-header">
-            <p className="small-text">Hostel Search</p>
-
-            <h2>Select Hostel</h2>
-          </div>
-
-          <div className="guard-hostel-selector">
-            <label htmlFor="hostel">Hostel</label>
-
+        <div className="admin-panel-body">
+          <div className="admin-form-group" style={{ maxWidth: "480px" }}>
+            <label className="admin-form-label" htmlFor="hostel">
+              Choose Hostel Block
+            </label>
             <select
               id="hostel"
+              className="admin-select"
               value={selectedHostel}
               onChange={handleHostelChange}
               disabled={loadingHostels}
             >
               <option value="">
-                {loadingHostels ? "Loading hostels..." : "Select a hostel"}
+                {loadingHostels ? "Loading campus hostels..." : "Select a hostel to inspect..."}
               </option>
-
               {hostels.map((hostel) => (
                 <option key={hostel._id} value={hostel._id}>
                   {hostel.name} ({hostel.code})
@@ -136,127 +135,143 @@ const GuardDashboard = () => {
               ))}
             </select>
           </div>
-        </section>
+        </div>
+      </div>
 
-        {/* =========================
-            ERROR
-        ========================= */}
+      {/* LOADING STUDENTS */}
+      {loadingStudents && (
+        <div className="admin-panel">
+          <div className="admin-empty-state">
+            <p>Querying hostel resident database...</p>
+          </div>
+        </div>
+      )}
 
-        {error && <div className="error-message">{error}</div>}
+      {/* HOSTEL DATA DISPLAY */}
+      {hostelData && !loadingStudents && (
+        <>
+          {/* Hostel Banner */}
+          <div className="admin-info-banner">
+            <div>
+              <h3>{hostelData.hostel.name}</h3>
+              <p>Hostel Code: <strong>{hostelData.hostel.code}</strong></p>
+            </div>
+            <span className="admin-info-banner-badge">Active Checkpoint</span>
+          </div>
 
-        {/* =========================
-            LOADING
-        ========================= */}
-
-        {loadingStudents && (
-          <section className="history-card">
-            <p>Loading hostel students...</p>
-          </section>
-        )}
-
-        {/* =========================
-            HOSTEL INFORMATION
-        ========================= */}
-
-        {hostelData && !loadingStudents && (
-          <>
-            <section className="history-card">
-              <div className="section-header">
-                <p className="small-text">Selected Hostel</p>
-
-                <h2>{hostelData.hostel.name}</h2>
-
-                <p>Code: {hostelData.hostel.code}</p>
+          {/* KPI Statistics */}
+          <div className="admin-kpi-grid">
+            <div className="admin-kpi-card">
+              <div className="admin-kpi-icon blue">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                </svg>
               </div>
-
-              {/* =========================
-                    STATISTICS
-                ========================= */}
-
-              <div className="admin-stats-grid">
-                <div className="admin-stat-card">
-                  <p className="small-text">Total Students</p>
-
-                  <h2>{hostelData.statistics.totalStudents}</h2>
-                </div>
-
-                <div className="admin-stat-card">
-                  <p className="small-text">Students Inside</p>
-
-                  <h2>{hostelData.statistics.studentsInside}</h2>
-                </div>
-
-                <div className="admin-stat-card">
-                  <p className="small-text">Students Outside</p>
-
-                  <h2>{hostelData.statistics.studentsOutside}</h2>
-                </div>
+              <div className="admin-kpi-info">
+                <span className="admin-kpi-label">Registered Residents</span>
+                <div className="admin-kpi-value">{hostelData.statistics?.totalStudents ?? 0}</div>
               </div>
-            </section>
+            </div>
 
-            {/* =========================
-                  STUDENT LIST
-              ========================= */}
-
-            <section className="history-card">
-              <div className="section-header">
-                <p className="small-text">Hostel Students</p>
-
-                <h2>Student Details</h2>
+            <div className="admin-kpi-card">
+              <div className="admin-kpi-icon green">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                  <polyline points="10 17 15 12 10 7" />
+                  <line x1="15" x2="3" y1="12" y2="12" />
+                </svg>
               </div>
+              <div className="admin-kpi-info">
+                <span className="admin-kpi-label">Students Inside</span>
+                <div className="admin-kpi-value">{hostelData.statistics?.studentsInside ?? 0}</div>
+              </div>
+            </div>
 
-              {hostelData.students?.length === 0 && (
-                <p className="history-empty">
-                  No students found in this hostel.
-                </p>
+            <div className="admin-kpi-card">
+              <div className="admin-kpi-icon amber">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                  <polyline points="16 17 21 12 16 7" />
+                  <line x1="21" x2="9" y1="12" y2="12" />
+                </svg>
+              </div>
+              <div className="admin-kpi-info">
+                <span className="admin-kpi-label">Students Outside</span>
+                <div className="admin-kpi-value">{hostelData.statistics?.studentsOutside ?? 0}</div>
+              </div>
+            </div>
+          </div>
+
+          {/* STUDENT LIST */}
+          <div className="admin-panel">
+            <div className="admin-panel-header">
+              <div className="admin-panel-title-area">
+                <span className="admin-panel-eyebrow">Resident Registry</span>
+                <h3 className="admin-panel-title">
+                  Students of {hostelData.hostel.name} ({hostelData.students?.length ?? 0})
+                </h3>
+              </div>
+            </div>
+
+            <div className="admin-panel-body" style={{ padding: 0 }}>
+              {(!hostelData.students || hostelData.students.length === 0) ? (
+                <div className="admin-empty-state">
+                  <p>No students assigned to this hostel.</p>
+                </div>
+              ) : (
+                <div className="admin-table-wrapper" style={{ border: "none", borderRadius: 0 }}>
+                  <table className="admin-table">
+                    <thead>
+                      <tr>
+                        <th>Student</th>
+                        <th>Roll Number</th>
+                        <th>Status</th>
+                        <th>Phone</th>
+                        <th>Email</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {hostelData.students.map((student) => (
+                        <tr key={student._id}>
+                          <td>
+                            <span className="admin-table-primary-text">{student.name}</span>
+                          </td>
+                          <td>
+                            <span style={{ fontFamily: "monospace", fontWeight: "600", fontSize: "13px" }}>
+                              {student.rollNumber}
+                            </span>
+                          </td>
+                          <td>
+                            <span
+                              className={`admin-badge ${
+                                student.status === "INSIDE" ? "inside" : "outside"
+                              }`}
+                            >
+                              {student.status || "UNKNOWN"}
+                            </span>
+                          </td>
+                          <td>
+                            <span className="admin-table-secondary-text">
+                              {student.phone || "—"}
+                            </span>
+                          </td>
+                          <td>
+                            <span className="admin-table-secondary-text">
+                              {student.email}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               )}
-
-              {hostelData.students?.length > 0 && (
-                <div className="guard-student-table-wrapper">
-                  <div className="guard-student-table">
-                    <div className="guard-student-header">
-                      <div>Student</div>
-                      <div>Roll Number</div>
-                      <div>Email</div>
-                      <div>Phone</div>
-                      <div>Status</div>
-                    </div>
-
-                    {hostelData.students.map((student) => (
-                      <div className="guard-student-row" key={student._id}>
-                        <div className="guard-student-name">
-                          <strong>{student.name}</strong>
-                        </div>
-
-                        <div className="guard-student-roll">
-                          {student.rollNumber}
-                        </div>
-
-                        <div className="guard-student-email">
-                          {student.email}
-                        </div>
-
-                        <div className="guard-student-phone">
-                          {student.phone || "—"}
-                        </div>
-
-                        <div>
-                          <span
-                            className={`student-status ${student.status?.toLowerCase()}`}
-                          >
-                            {student.status}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </section>
-          </>
-        )}
-      </main>
-    </div>
+            </div>
+          </div>
+        </>
+      )}
+    </AdminShell>
   );
 };
 
