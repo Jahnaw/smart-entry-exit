@@ -3,20 +3,87 @@ import { Html5Qrcode } from "html5-qrcode";
 
 const QRScanner = ({ onScanSuccess, onClose }) => {
   const scannerRef = useRef(null);
+  const mountedRef = useRef(false);
+  const stoppedRef = useRef(false);
+  const scanSuccessRef = useRef(onScanSuccess);
 
   const [error, setError] = useState("");
   const [starting, setStarting] = useState(true);
 
+  // Always keep the latest callback without
+  // restarting the camera.
+  useEffect(() => {
+    scanSuccessRef.current = onScanSuccess;
+  }, [onScanSuccess]);
+
   useEffect(() => {
     const scannerId = "qr-reader";
 
-    const scanner = new Html5Qrcode(scannerId);
+    mountedRef.current = true;
+    stoppedRef.current = false;
 
+    const scanner = new Html5Qrcode(scannerId);
     scannerRef.current = scanner;
+
+    const stopCamera = async () => {
+      if (stoppedRef.current) {
+        return;
+      }
+
+      stoppedRef.current = true;
+
+      // -----------------------------------------
+      // 1. Stop html5-qrcode
+      // -----------------------------------------
+      try {
+        if (scanner.isScanning) {
+          await scanner.stop();
+        }
+      } catch (error) {
+        console.error("Error stopping html5-qrcode:", error);
+      }
+
+      // -----------------------------------------
+      // 2. Stop actual browser camera tracks
+      // -----------------------------------------
+      try {
+        const readerElement =
+          document.getElementById(scannerId);
+
+        if (readerElement) {
+          const video =
+            readerElement.querySelector("video");
+
+          if (video?.srcObject) {
+            const stream = video.srcObject;
+
+            stream.getTracks().forEach((track) => {
+              track.stop();
+            });
+
+            video.srcObject = null;
+          }
+        }
+      } catch (error) {
+        console.error("Error stopping camera tracks:", error);
+      }
+
+      // -----------------------------------------
+      // 3. Clear html5-qrcode DOM
+      // -----------------------------------------
+      try {
+        scanner.clear();
+      } catch (error) {
+        console.error("Scanner clear error:", error);
+      }
+
+      scannerRef.current = null;
+    };
 
     const startScanner = async () => {
       try {
         setError("");
+        setStarting(true);
 
         await scanner.start(
           {
@@ -30,30 +97,36 @@ const QRScanner = ({ onScanSuccess, onClose }) => {
             },
           },
           async (decodedText) => {
-            try {
-              await scanner.stop();
-            } catch (stopError) {
-              console.error(
-                "Error stopping scanner:",
-                stopError
-              );
+            // Ignore scans after component has closed.
+            if (!mountedRef.current) {
+              return;
             }
 
-            onScanSuccess(decodedText);
+            // Stop camera immediately after successful scan.
+            await stopCamera();
+
+            if (mountedRef.current) {
+              scanSuccessRef.current(decodedText);
+            }
           },
           () => {
             // QR not detected yet.
-            // This callback fires repeatedly,
-            // so we intentionally don't show an error.
           }
         );
 
+        // Component may have unmounted while camera was starting.
+        if (!mountedRef.current) {
+          await stopCamera();
+          return;
+        }
+
         setStarting(false);
       } catch (error) {
-        console.error(
-          "Camera start error:",
-          error
-        );
+        console.error("Camera start error:", error);
+
+        if (!mountedRef.current) {
+          return;
+        }
 
         setStarting(false);
 
@@ -65,33 +138,73 @@ const QRScanner = ({ onScanSuccess, onClose }) => {
 
     startScanner();
 
+    // -----------------------------------------
+    // React cleanup
+    // -----------------------------------------
     return () => {
-      const stopScanner = async () => {
-        try {
-          if (
-            scannerRef.current &&
-            scannerRef.current.isScanning
-          ) {
-            await scannerRef.current.stop();
-          }
-        } catch (error) {
-          console.error(
-            "Scanner cleanup error:",
-            error
-          );
-        }
-      };
+      mountedRef.current = false;
 
-      stopScanner();
+      stopCamera();
     };
-  }, [onScanSuccess]);
+  }, []);
+
+  const handleClose = async () => {
+    // Mark scanner as closed immediately.
+    mountedRef.current = false;
+
+    const scanner = scannerRef.current;
+
+    if (scanner) {
+      try {
+        if (scanner.isScanning) {
+          await scanner.stop();
+        }
+      } catch (error) {
+        console.error("Camera stop error:", error);
+      }
+
+      // Explicitly stop camera tracks.
+      try {
+        const readerElement =
+          document.getElementById("qr-reader");
+
+        if (readerElement) {
+          const video =
+            readerElement.querySelector("video");
+
+          if (video?.srcObject) {
+            const stream = video.srcObject;
+
+            stream.getTracks().forEach((track) => {
+              track.stop();
+            });
+
+            video.srcObject = null;
+          }
+        }
+      } catch (error) {
+        console.error("Camera track cleanup error:", error);
+      }
+
+      try {
+        scanner.clear();
+      } catch (error) {
+        console.error("Scanner clear error:", error);
+      }
+
+      scannerRef.current = null;
+    }
+
+    onClose();
+  };
 
   return (
     <div className="scanner-page">
       <div className="scanner-header">
         <button
+          type="button"
           className="back-button"
-          onClick={onClose}
+          onClick={handleClose}
         >
           ←
         </button>
@@ -127,8 +240,9 @@ const QRScanner = ({ onScanSuccess, onClose }) => {
         </p>
 
         <button
+          type="button"
           className="cancel-button"
-          onClick={onClose}
+          onClick={handleClose}
         >
           Cancel
         </button>

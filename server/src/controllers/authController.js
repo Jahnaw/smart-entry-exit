@@ -12,21 +12,61 @@ const Hostel = require("../models/Hostel");
 
 const signup = async (req, res) => {
   try {
-    const { name, rollNumber, email, password, phone, hostelId } = req.body;
+    const {
+      name,
+      rollNumber,
+      email,
+      password,
+      phone,
+      hostelId,
+    } = req.body;
 
     // 1. Validate required fields
 
     if (!name || !rollNumber || !email || !password || !hostelId) {
       return res.status(400).json({
         success: false,
-        message: "Name, roll number, email, password and hostel are required",
+        message:
+          "Name, roll number, email, password and hostel are required",
       });
     }
 
-    // 2. Check email in students
+    // ==========================================
+    // 2. VALIDATE STUDENT ROLL NUMBER
+    // ==========================================
+
+    const normalizedRollNumber = rollNumber.trim();
+
+    if (!/^\d{10}$/.test(normalizedRollNumber)) {
+      return res.status(400).json({
+        success: false,
+        message: "Roll number must be exactly 10 digits",
+      });
+    }
+
+    // ==========================================
+    // 3. VALIDATE COLLEGE EMAIL
+    // ==========================================
+
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const expectedEmail =
+      `${normalizedRollNumber}@mmmut.ac.in`;
+
+    if (normalizedEmail !== expectedEmail) {
+      return res.status(400).json({
+        success: false,
+        message:
+          `Please use your college email: ${expectedEmail}`,
+      });
+    }
+
+    // ==========================================
+    // 4. CHECK EMAIL IN STUDENTS
+    // ==========================================
 
     const existingStudent = await Student.findOne({
-      email: email.toLowerCase(),
+      email: normalizedEmail,
     });
 
     if (existingStudent) {
@@ -36,10 +76,12 @@ const signup = async (req, res) => {
       });
     }
 
-    // 3. Check email in wardens
+    // ==========================================
+    // 5. CHECK EMAIL IN WARDENS
+    // ==========================================
 
     const existingWarden = await Warden.findOne({
-      email: email.toLowerCase(),
+      email: normalizedEmail,
     });
 
     if (existingWarden) {
@@ -49,10 +91,12 @@ const signup = async (req, res) => {
       });
     }
 
-    // 4. Check email in guards
+    // ==========================================
+    // 6. CHECK EMAIL IN GUARDS
+    // ==========================================
 
     const existingGuard = await Guard.findOne({
-      email: email.toLowerCase(),
+      email: normalizedEmail,
     });
 
     if (existingGuard) {
@@ -62,10 +106,12 @@ const signup = async (req, res) => {
       });
     }
 
-    // 4. Check roll number
+    // ==========================================
+    // 7. CHECK ROLL NUMBER
+    // ==========================================
 
     const existingRollNumber = await Student.findOne({
-      rollNumber,
+      rollNumber: normalizedRollNumber,
     });
 
     if (existingRollNumber) {
@@ -75,7 +121,9 @@ const signup = async (req, res) => {
       });
     }
 
-    // 5. Verify hostel
+    // ==========================================
+    // 8. VERIFY HOSTEL
+    // ==========================================
 
     const hostel = await Hostel.findOne({
       _id: hostelId,
@@ -89,23 +137,29 @@ const signup = async (req, res) => {
       });
     }
 
-    // 6. Hash password
+    // ==========================================
+    // 9. HASH PASSWORD
+    // ==========================================
 
     const passwordHash = await bcrypt.hash(password, 12);
 
-    // 7. Create student
+    // ==========================================
+    // 10. CREATE STUDENT
+    // ==========================================
 
     const student = await Student.create({
       name,
-      rollNumber,
-      email: email.toLowerCase(),
+      rollNumber: normalizedRollNumber,
+      email: normalizedEmail,
       passwordHash,
       phone,
       hostelId,
       role: "STUDENT",
     });
 
-    // 8. Return safe information
+    // ==========================================
+    // 11. RETURN SAFE INFORMATION
+    // ==========================================
 
     res.status(201).json({
       success: true,
@@ -136,6 +190,7 @@ const signup = async (req, res) => {
 // STUDENT
 // ADMIN
 // WARDEN
+// GUARD
 // ==========================================
 
 const login = async (req, res) => {
@@ -215,7 +270,10 @@ const login = async (req, res) => {
     }).populate("hostelId", "name code");
 
     if (warden) {
-      const passwordMatch = await bcrypt.compare(password, warden.passwordHash);
+      const passwordMatch = await bcrypt.compare(
+        password,
+        warden.passwordHash,
+      );
 
       if (!passwordMatch) {
         return res.status(401).json({
@@ -269,7 +327,10 @@ const login = async (req, res) => {
     });
 
     if (guard) {
-      const passwordMatch = await bcrypt.compare(password, guard.passwordHash);
+      const passwordMatch = await bcrypt.compare(
+        password,
+        guard.passwordHash,
+      );
 
       if (!passwordMatch) {
         return res.status(401).json({
@@ -307,7 +368,7 @@ const login = async (req, res) => {
     }
 
     // ==========================================
-    // 4. ACCOUNT NOT FOUND
+    // 5. ACCOUNT NOT FOUND
     // ==========================================
 
     return res.status(401).json({

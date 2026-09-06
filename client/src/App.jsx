@@ -1,4 +1,9 @@
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter,
+  Navigate,
+  Route,
+  Routes,
+} from "react-router-dom";
 
 import GateQR from "./pages/GateQR";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -12,13 +17,23 @@ import WardenAttendance from "./pages/WardenAttendance";
 import GuardDashboard from "./pages/GuardDashboard";
 import AdminGuards from "./pages/AdminGuards";
 
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
+
+const GateRedirect = () => {
+  const { isAuthenticated } = useAuth();
+
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return <Navigate to="/login" replace />;
+};
 
 const App = () => {
   return (
@@ -29,7 +44,10 @@ const App = () => {
               DEFAULT
           ========================= */}
 
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route
+            path="/"
+            element={<Navigate to="/dashboard" replace />}
+          />
 
           {/* =========================
               AUTH
@@ -38,6 +56,15 @@ const App = () => {
           <Route path="/login" element={<Login />} />
 
           <Route path="/signup" element={<Signup />} />
+
+          {/* =========================
+              GOOGLE LENS GATE URL
+          ========================= */}
+
+          <Route
+            path="/gate"
+            element={<GateRedirect />}
+          />
 
           {/* =========================
               STUDENT

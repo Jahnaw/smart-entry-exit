@@ -58,12 +58,40 @@ const Signup = () => {
       ...previous,
       [name]: value,
     }));
+
+    // Clear the previous error while the user edits
+    if (error) {
+      setError("");
+    }
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     setError("");
+
+    const rollNumber = formData.rollNumber.trim();
+    const email = formData.email.trim().toLowerCase();
+
+    // Roll number must contain exactly 10 digits
+    if (!/^\d{10}$/.test(rollNumber)) {
+      setError(
+        "Roll number must be exactly 10 digits."
+      );
+      return;
+    }
+
+    // College email must be:
+    // rollnumber@mmmut.ac.in
+    const expectedEmail =
+      `${rollNumber}@mmmut.ac.in`;
+
+    if (email !== expectedEmail) {
+      setError(
+        `Please use your college email: ${expectedEmail}`
+      );
+      return;
+    }
 
     if (!formData.hostelId) {
       setError("Please select your hostel.");
@@ -73,7 +101,11 @@ const Signup = () => {
     setLoading(true);
 
     try {
-      await signupStudent(formData);
+      await signupStudent({
+        ...formData,
+        rollNumber,
+        email,
+      });
 
       navigate("/login");
     } catch (error) {

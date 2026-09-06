@@ -68,25 +68,60 @@ const Dashboard = () => {
       setLoadingGate(true);
       setLocationStatus("Reading QR code...");
 
-      let qrData;
+      let qrToken;
 
+      /*
+       * NEW QR FORMAT
+       *
+       * Example:
+       * http://localhost:5173/gate?token=abc123
+       *
+       * or after deployment:
+       * https://your-website.com/gate?token=abc123
+       */
       try {
-        qrData = JSON.parse(decodedText);
-      } catch (error) {
-        throw new Error("This is not a valid Smart Entry-Exit QR code.");
-      }
+        const qrUrl = new URL(decodedText);
 
-      if (qrData.type !== "SMART_ENTRY_EXIT_GATE") {
-        throw new Error("This QR code does not belong to Smart Entry-Exit.");
-      }
+        qrToken = qrUrl.searchParams.get("token");
 
-      if (!qrData.token) {
-        throw new Error("Gate token is missing from the QR code.");
+        if (!qrToken) {
+          throw new Error("Gate token is missing from the QR code.");
+        }
+      } catch (urlError) {
+        /*
+         * BACKWARD COMPATIBILITY
+         *
+         * Supports old QR codes containing:
+         *
+         * {
+         *   "type": "SMART_ENTRY_EXIT_GATE",
+         *   "token": "abc123"
+         * }
+         */
+        try {
+          const qrData = JSON.parse(decodedText);
+
+          if (qrData.type !== "SMART_ENTRY_EXIT_GATE") {
+            throw new Error(
+              "This QR code does not belong to Smart Entry-Exit.",
+            );
+          }
+
+          if (!qrData.token) {
+            throw new Error("Gate token is missing from the QR code.");
+          }
+
+          qrToken = qrData.token;
+        } catch (jsonError) {
+          throw new Error(
+            "This is not a valid Smart Entry-Exit QR code.",
+          );
+        }
       }
 
       setLocationStatus("Identifying gate...");
 
-      const gateData = await getGateByQrToken(qrData.token);
+      const gateData = await getGateByQrToken(qrToken);
 
       console.log("GATE FOUND:", gateData);
 
@@ -105,7 +140,7 @@ const Dashboard = () => {
       const locationData = await verifyLocation({
         token,
         deviceToken,
-        qrToken: qrData.token,
+        qrToken,
         latitude: location.latitude,
         longitude: location.longitude,
         accuracy: location.accuracy,
@@ -116,7 +151,7 @@ const Dashboard = () => {
       const attendanceData = await markAttendance({
         token,
         deviceToken,
-        qrToken: qrData.token,
+        qrToken,
         latitude: location.latitude,
         longitude: location.longitude,
         accuracy: location.accuracy,
@@ -155,6 +190,7 @@ const Dashboard = () => {
       console.error("QR/location verification error:", error);
 
       setLocationStatus("");
+
       setScanError(error.message);
     } finally {
       setLoadingGate(false);

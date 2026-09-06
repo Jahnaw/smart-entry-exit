@@ -7,17 +7,62 @@ const Hostel = require("../src/models/Hostel");
 const MONGO_URI = process.env.MONGODB_URI;
 
 const hostels = [
+  // ==========================================
+  // BOYS HOSTELS
+  // ==========================================
+
   {
-    name: "Hostel A",
-    code: "H-A",
+    name: "Raman Bhawan",
+    code: "RAMAN",
   },
   {
-    name: "Hostel B",
-    code: "H-B",
+    name: "Subhash Bhawan",
+    code: "SUBHASH",
   },
   {
-    name: "Hostel C",
-    code: "H-C",
+    name: "Visveswaraya Bhawan",
+    code: "VISVESWARAYA",
+  },
+  {
+    name: "Tagore Bhawan",
+    code: "TAGORE",
+  },
+  {
+    name: "Ambedkar Bhawan",
+    code: "AMBEDKAR",
+  },
+  {
+    name: "Tilak Bhawan",
+    code: "TILAK",
+  },
+  {
+    name: "Ramanujam Bhawan",
+    code: "RAMANUJAM",
+  },
+
+  // ==========================================
+  // GIRLS HOSTELS
+  // ==========================================
+
+  {
+    name: "Saraswati Bhawan",
+    code: "SARASWATI",
+  },
+  {
+    name: "Sarojani Bhawan",
+    code: "SAROJANI",
+  },
+  {
+    name: "Kalpna Chawala Bhawan",
+    code: "KALPNA-CHAWALA",
+  },
+  {
+    name: "Kasturaba Bhawan",
+    code: "KASTURABA",
+  },
+  {
+    name: "Savitribai Phule Bhawan",
+    code: "SAVITRIBAI-PHULE",
   },
 ];
 
