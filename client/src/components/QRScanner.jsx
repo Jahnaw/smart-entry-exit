@@ -3,42 +3,49 @@ import { Html5Qrcode } from "html5-qrcode";
 
 const QRScanner = ({ onScanSuccess, onClose }) => {
   const scannerRef = useRef(null);
-  const mountedRef = useRef(true);
+  const mountedRef = useRef(false);
   const stoppedRef = useRef(false);
+  const scanSuccessRef = useRef(onScanSuccess);
 
   const [error, setError] = useState("");
   const [starting, setStarting] = useState(true);
 
+  // Always keep the latest callback without
+  // restarting the camera.
+  useEffect(() => {
+    scanSuccessRef.current = onScanSuccess;
+  }, [onScanSuccess]);
+
   useEffect(() => {
     const scannerId = "qr-reader";
 
-    const scanner = new Html5Qrcode(scannerId);
-
-    scannerRef.current = scanner;
     mountedRef.current = true;
     stoppedRef.current = false;
 
+    const scanner = new Html5Qrcode(scannerId);
+    scannerRef.current = scanner;
+
     const stopCamera = async () => {
-      // Prevent cleanup from running multiple times
       if (stoppedRef.current) {
         return;
       }
 
       stoppedRef.current = true;
 
+      // -----------------------------------------
+      // 1. Stop html5-qrcode
+      // -----------------------------------------
       try {
-        // First stop html5-qrcode
         if (scanner.isScanning) {
           await scanner.stop();
         }
       } catch (error) {
-        console.error(
-          "Error stopping html5-qrcode:",
-          error
-        );
+        console.error("Error stopping html5-qrcode:", error);
       }
 
-      // Explicitly stop the actual browser camera stream
+      // -----------------------------------------
+      // 2. Stop actual browser camera tracks
+      // -----------------------------------------
       try {
         const readerElement =
           document.getElementById(scannerId);
@@ -47,7 +54,7 @@ const QRScanner = ({ onScanSuccess, onClose }) => {
           const video =
             readerElement.querySelector("video");
 
-          if (video && video.srcObject) {
+          if (video?.srcObject) {
             const stream = video.srcObject;
 
             stream.getTracks().forEach((track) => {
@@ -58,26 +65,25 @@ const QRScanner = ({ onScanSuccess, onClose }) => {
           }
         }
       } catch (error) {
-        console.error(
-          "Error stopping camera tracks:",
-          error
-        );
+        console.error("Error stopping camera tracks:", error);
       }
 
-      // Clear html5-qrcode DOM/resources
+      // -----------------------------------------
+      // 3. Clear html5-qrcode DOM
+      // -----------------------------------------
       try {
         scanner.clear();
       } catch (error) {
-        console.error(
-          "Scanner clear error:",
-          error
-        );
+        console.error("Scanner clear error:", error);
       }
+
+      scannerRef.current = null;
     };
 
     const startScanner = async () => {
       try {
         setError("");
+        setStarting(true);
 
         await scanner.start(
           {
@@ -91,11 +97,16 @@ const QRScanner = ({ onScanSuccess, onClose }) => {
             },
           },
           async (decodedText) => {
-            // Stop camera immediately after first successful scan
+            // Ignore scans after component has closed.
+            if (!mountedRef.current) {
+              return;
+            }
+
+            // Stop camera immediately after successful scan.
             await stopCamera();
 
             if (mountedRef.current) {
-              onScanSuccess(decodedText);
+              scanSuccessRef.current(decodedText);
             }
           },
           () => {
@@ -103,43 +114,57 @@ const QRScanner = ({ onScanSuccess, onClose }) => {
           }
         );
 
-        if (mountedRef.current) {
-          setStarting(false);
+        // Component may have unmounted while camera was starting.
+        if (!mountedRef.current) {
+          await stopCamera();
+          return;
         }
+
+        setStarting(false);
       } catch (error) {
-        console.error(
-          "Camera start error:",
-          error
-        );
+        console.error("Camera start error:", error);
 
-        if (mountedRef.current) {
-          setStarting(false);
-
-          setError(
-            "Unable to access the camera. Please allow camera permission and try again."
-          );
+        if (!mountedRef.current) {
+          return;
         }
+
+        setStarting(false);
+
+        setError(
+          "Unable to access the camera. Please allow camera permission and try again."
+        );
       }
     };
 
     startScanner();
 
+    // -----------------------------------------
+    // React cleanup
+    // -----------------------------------------
     return () => {
       mountedRef.current = false;
 
-      // Explicitly stop camera when QRScanner unmounts
       stopCamera();
     };
-  }, [onScanSuccess]);
+  }, []);
 
   const handleClose = async () => {
-    // Stop camera BEFORE closing the scanner component
-    try {
-      if (scannerRef.current) {
-        if (scannerRef.current.isScanning) {
-          await scannerRef.current.stop();
-        }
+    // Mark scanner as closed immediately.
+    mountedRef.current = false;
 
+    const scanner = scannerRef.current;
+
+    if (scanner) {
+      try {
+        if (scanner.isScanning) {
+          await scanner.stop();
+        }
+      } catch (error) {
+        console.error("Camera stop error:", error);
+      }
+
+      // Explicitly stop camera tracks.
+      try {
         const readerElement =
           document.getElementById("qr-reader");
 
@@ -147,29 +172,27 @@ const QRScanner = ({ onScanSuccess, onClose }) => {
           const video =
             readerElement.querySelector("video");
 
-          if (video && video.srcObject) {
-            video.srcObject
-              .getTracks()
-              .forEach((track) => track.stop());
+          if (video?.srcObject) {
+            const stream = video.srcObject;
+
+            stream.getTracks().forEach((track) => {
+              track.stop();
+            });
 
             video.srcObject = null;
           }
         }
-
-        try {
-          scannerRef.current.clear();
-        } catch (error) {
-          console.error(
-            "Scanner clear error:",
-            error
-          );
-        }
+      } catch (error) {
+        console.error("Camera track cleanup error:", error);
       }
-    } catch (error) {
-      console.error(
-        "Camera close error:",
-        error
-      );
+
+      try {
+        scanner.clear();
+      } catch (error) {
+        console.error("Scanner clear error:", error);
+      }
+
+      scannerRef.current = null;
     }
 
     onClose();
@@ -179,6 +202,7 @@ const QRScanner = ({ onScanSuccess, onClose }) => {
     <div className="scanner-page">
       <div className="scanner-header">
         <button
+          type="button"
           className="back-button"
           onClick={handleClose}
         >
@@ -216,6 +240,7 @@ const QRScanner = ({ onScanSuccess, onClose }) => {
         </p>
 
         <button
+          type="button"
           className="cancel-button"
           onClick={handleClose}
         >
