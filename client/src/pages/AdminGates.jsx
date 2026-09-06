@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import AdminShell from "../components/AdminShell";
+import "../styles/admin.css";
 
 import {
   getAllGates,
@@ -98,7 +100,6 @@ const AdminGates = () => {
     if (name === "type" && value === "MAIN") {
       setForm((currentForm) => ({
         ...currentForm,
-        type: "MAIN",
         hostelId: "",
       }));
     }
@@ -122,23 +123,35 @@ const AdminGates = () => {
   };
 
   // ==========================================
-  // CREATE / UPDATE GATE
+  // START EDITING
+  // ==========================================
+
+  const handleEdit = (gate) => {
+    setEditingGate(gate);
+
+    setForm({
+      name: gate.name,
+      type: gate.type,
+      hostelId: gate.hostelId || "",
+      latitude: gate.latitude,
+      longitude: gate.longitude,
+      radius: gate.radius,
+    });
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // ==========================================
+  // CREATE OR UPDATE GATE
   // ==========================================
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    setError("");
-    setSuccess("");
-
-    // Hostel gate must have hostel
-    if (form.type === "HOSTEL" && !form.hostelId) {
-      setError("Please select a hostel for the hostel gate.");
-
-      return;
-    }
-
     try {
+      setError("");
+      setSuccess("");
+
       if (editingGate) {
         const data = await updateGate({
           token,
@@ -149,12 +162,11 @@ const AdminGates = () => {
           latitude: Number(form.latitude),
           longitude: Number(form.longitude),
           radius: Number(form.radius),
-          active: editingGate.active,
         });
 
         setGates((currentGates) =>
-          currentGates.map((gate) =>
-            gate.id === editingGate.id ? data.gate : gate,
+          currentGates.map((currentGate) =>
+            currentGate.id === editingGate.id ? data.gate : currentGate,
           ),
         );
 
@@ -170,7 +182,7 @@ const AdminGates = () => {
           radius: Number(form.radius),
         });
 
-        setGates((currentGates) => [data.gate, ...currentGates]);
+        setGates((currentGates) => [...currentGates, data.gate]);
 
         setSuccess("Gate created successfully.");
       }
@@ -184,33 +196,12 @@ const AdminGates = () => {
   };
 
   // ==========================================
-  // EDIT
-  // ==========================================
-
-  const handleEdit = (gate) => {
-    setError("");
-    setSuccess("");
-    setQrCode(null);
-
-    setEditingGate(gate);
-
-    setForm({
-      name: gate.name,
-      type: gate.type || "MAIN",
-      hostelId: gate.hostelId || "",
-      latitude: String(gate.latitude),
-      longitude: String(gate.longitude),
-      radius: String(gate.radius),
-    });
-  };
-
-  // ==========================================
-  // DELETE
+  // DELETE GATE
   // ==========================================
 
   const handleDelete = async (gate) => {
     const confirmed = window.confirm(
-      `Are you sure you want to delete "${gate.name}"?`,
+      `Are you sure you want to delete ${gate.name}?`,
     );
 
     if (!confirmed) {
@@ -231,10 +222,6 @@ const AdminGates = () => {
       );
 
       setSuccess("Gate deleted successfully.");
-
-      if (editingGate?.id === gate.id) {
-        resetForm();
-      }
     } catch (error) {
       console.error("Delete gate error:", error);
 
@@ -305,158 +292,177 @@ const AdminGates = () => {
   };
 
   return (
-    <div className="dashboard-page">
-      <header className="dashboard-header">
-        <div>
-          <h1>Smart Entry-Exit</h1>
-          <p>Gate Management</p>
+    <AdminShell
+      title="Gate Management"
+      subtitle="Administration / Gate Configuration & Geofencing"
+      portalType="admin"
+    >
+      {error && (
+        <div className="admin-alert-error">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" x2="12" y1="8" y2="12" />
+            <line x1="12" x2="12" y1="16" y2="16.01" />
+          </svg>
+          <span>{error}</span>
+        </div>
+      )}
+
+      {success && (
+        <div className="admin-alert-success">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+          <span>{success}</span>
+        </div>
+      )}
+
+      {/* CREATE / EDIT GATE PANEL */}
+      <div className="admin-panel">
+        <div className="admin-panel-header">
+          <div className="admin-panel-title-area">
+            <span className="admin-panel-eyebrow">Gate Configuration</span>
+            <h3 className="admin-panel-title">
+              {editingGate ? `Editing: ${editingGate.name}` : "Create New Gate Point"}
+            </h3>
+          </div>
         </div>
 
-        <a href="/admin/dashboard" className="admin-back-link">
-          Dashboard
-        </a>
-      </header>
-
-      <main className="dashboard-content">
-        {/* ======================================
-            CREATE / EDIT GATE
-        ====================================== */}
-
-        <section className="history-card">
-          <div className="section-header">
-            <div>
-              <p className="small-text">Gate Management</p>
-
-              <h2>{editingGate ? "Edit Gate" : "Create New Gate"}</h2>
-            </div>
-          </div>
-
-          {error && <div className="error-message">{error}</div>}
-
-          {success && <div className="success-message">{success}</div>}
-
-          <form onSubmit={handleSubmit} className="gate-form">
-            {/* GATE NAME */}
-
-            <div className="gate-form-group">
-              <label htmlFor="name">Gate Name</label>
-
-              <input
-                id="name"
-                name="name"
-                type="text"
-                placeholder="e.g. Main Gate"
-                value={form.name}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            {/* GATE TYPE */}
-
-            <div className="gate-form-group">
-              <label htmlFor="type">Gate Type</label>
-
-              <select
-                id="type"
-                name="type"
-                value={form.type}
-                onChange={handleChange}
-                required
-              >
-                <option value="MAIN">Main Gate</option>
-
-                <option value="HOSTEL">Hostel Gate</option>
-              </select>
-            </div>
-
-            {/* HOSTEL */}
-
-            {form.type === "HOSTEL" && (
-              <div className="gate-form-group">
-                <label htmlFor="hostelId">Hostel</label>
-
-                <select
-                  id="hostelId"
-                  name="hostelId"
-                  value={form.hostelId}
+        <div className="admin-panel-body">
+          <form onSubmit={handleSubmit}>
+            <div className="admin-form-grid">
+              {/* Gate Name */}
+              <div className="admin-form-group">
+                <label className="admin-form-label" htmlFor="name">
+                  Gate Name *
+                </label>
+                <input
+                  id="name"
+                  name="name"
+                  className="admin-input"
+                  type="text"
+                  placeholder="e.g. Main Entrance Gate"
+                  value={form.name}
                   onChange={handleChange}
                   required
-                  disabled={hostelsLoading}
-                >
-                  <option value="">
-                    {hostelsLoading ? "Loading hostels..." : "Select hostel"}
-                  </option>
+                />
+              </div>
 
-                  {hostels.map((hostel) => (
-                    <option key={hostel._id} value={hostel._id}>
-                      {hostel.name} ({hostel.code})
-                    </option>
-                  ))}
+              {/* Gate Type */}
+              <div className="admin-form-group">
+                <label className="admin-form-label" htmlFor="type">
+                  Gate Category *
+                </label>
+                <select
+                  id="type"
+                  name="type"
+                  className="admin-select"
+                  value={form.type}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="MAIN">Campus Main Gate</option>
+                  <option value="HOSTEL">Hostel Gate</option>
                 </select>
               </div>
-            )}
 
-            {/* LATITUDE */}
+              {/* Hostel Selector (if Hostel gate) */}
+              {form.type === "HOSTEL" && (
+                <div className="admin-form-group">
+                  <label className="admin-form-label" htmlFor="hostelId">
+                    Assigned Hostel *
+                  </label>
+                  <select
+                    id="hostelId"
+                    name="hostelId"
+                    className="admin-select"
+                    value={form.hostelId}
+                    onChange={handleChange}
+                    required
+                    disabled={hostelsLoading}
+                  >
+                    <option value="">
+                      {hostelsLoading ? "Loading hostels..." : "Select hostel"}
+                    </option>
+                    {hostels.map((hostel) => (
+                      <option key={hostel._id} value={hostel._id}>
+                        {hostel.name} ({hostel.code})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
 
-            <div className="gate-form-group">
-              <label htmlFor="latitude">Latitude</label>
+              {/* Latitude */}
+              <div className="admin-form-group">
+                <label className="admin-form-label" htmlFor="latitude">
+                  GPS Latitude *
+                </label>
+                <input
+                  id="latitude"
+                  name="latitude"
+                  className="admin-input"
+                  type="number"
+                  step="any"
+                  placeholder="e.g. 30.3165"
+                  value={form.latitude}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
 
-              <input
-                id="latitude"
-                name="latitude"
-                type="number"
-                step="any"
-                placeholder="e.g. 30.3165"
-                value={form.latitude}
-                onChange={handleChange}
-                required
-              />
+              {/* Longitude */}
+              <div className="admin-form-group">
+                <label className="admin-form-label" htmlFor="longitude">
+                  GPS Longitude *
+                </label>
+                <input
+                  id="longitude"
+                  name="longitude"
+                  className="admin-input"
+                  type="number"
+                  step="any"
+                  placeholder="e.g. 78.0322"
+                  value={form.longitude}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              {/* Geofence Radius */}
+              <div className="admin-form-group">
+                <label className="admin-form-label" htmlFor="radius">
+                  Geofence Radius (meters) *
+                </label>
+                <input
+                  id="radius"
+                  name="radius"
+                  className="admin-input"
+                  type="number"
+                  min="10"
+                  max="500"
+                  placeholder="e.g. 50"
+                  value={form.radius}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
             </div>
 
-            {/* LONGITUDE */}
-
-            <div className="gate-form-group">
-              <label htmlFor="longitude">Longitude</label>
-
-              <input
-                id="longitude"
-                name="longitude"
-                type="number"
-                step="any"
-                placeholder="e.g. 78.0322"
-                value={form.longitude}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            {/* RADIUS */}
-
-            <div className="gate-form-group">
-              <label htmlFor="radius">Geofence Radius (meters)</label>
-
-              <input
-                id="radius"
-                name="radius"
-                type="number"
-                min="10"
-                max="500"
-                value={form.radius}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="gate-form-actions">
-              <button type="submit" className="primary-button">
-                {editingGate ? "Update Gate" : "Create Gate"}
+            <div className="admin-form-actions">
+              <button type="submit" className="admin-btn-primary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                  <polyline points="17 21 17 13 7 13 7 21" />
+                  <polyline points="7 3 7 8 15 8" />
+                </svg>
+                <span>{editingGate ? "Update Gate" : "Save Gate Point"}</span>
               </button>
 
               {editingGate && (
                 <button
                   type="button"
-                  className="gate-cancel-button"
+                  className="admin-btn-secondary"
                   onClick={resetForm}
                 >
                   Cancel Edit
@@ -464,143 +470,174 @@ const AdminGates = () => {
               )}
             </div>
           </form>
-        </section>
+        </div>
+      </div>
 
-        {/* ======================================
-            ALL GATES
-        ====================================== */}
-
-        <section className="history-card">
-          <div className="section-header">
-            <p className="small-text">Existing Gates</p>
-
-            <h2>All Gates</h2>
+      {/* QR CODE PREVIEW MODAL / PANEL */}
+      {qrCode && (
+        <div className="admin-panel" style={{ border: "2px solid #BFDBFE" }}>
+          <div className="admin-panel-header" style={{ background: "#EFF6FF" }}>
+            <div className="admin-panel-title-area">
+              <span className="admin-panel-eyebrow">QR Code Token</span>
+              <h3 className="admin-panel-title">{qrCode.name} Entrance Token</h3>
+            </div>
+            <button
+              type="button"
+              className="admin-btn-secondary"
+              onClick={() => setQrCode(null)}
+              style={{ padding: "6px 12px", fontSize: "12px" }}
+            >
+              Close
+            </button>
           </div>
+          <div className="admin-qr-card-content">
+            <div className="admin-qr-image-wrapper">
+              <img
+                src={qrCode.image}
+                alt={`${qrCode.name} QR Code`}
+                className="admin-qr-image"
+              />
+            </div>
+            <p style={{ fontSize: "13px", color: "var(--admin-text-secondary)", margin: 0 }}>
+              Print and place this QR code securely at the gate entry/exit barrier.
+            </p>
+            <div className="admin-qr-actions">
+              <button
+                type="button"
+                className="admin-btn-primary"
+                onClick={() => window.print()}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="6 9 6 2 18 2 18 9" />
+                  <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                  <rect width="12" height="8" x="6" y="14" />
+                </svg>
+                <span>Print QR Code</span>
+              </button>
+              <button
+                type="button"
+                className="admin-btn-secondary"
+                onClick={() => setQrCode(null)}
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
-          {loading && <p className="history-empty">Loading gates...</p>}
+      {/* EXISTING GATES TABLE PANEL */}
+      <div className="admin-panel">
+        <div className="admin-panel-header">
+          <div className="admin-panel-title-area">
+            <span className="admin-panel-eyebrow">Configured Entrance Points</span>
+            <h3 className="admin-panel-title">All Campus Gates ({gates.length})</h3>
+          </div>
+        </div>
+
+        <div className="admin-panel-body" style={{ padding: 0 }}>
+          {loading && (
+            <div className="admin-empty-state">
+              <p>Loading gate locations...</p>
+            </div>
+          )}
 
           {!loading && gates.length === 0 && (
-            <p className="history-empty">No gates created yet.</p>
+            <div className="admin-empty-state">
+              <p>No gates created yet. Use the form above to add your first campus gate.</p>
+            </div>
           )}
 
           {!loading && gates.length > 0 && (
-            <div className="admin-gates-table-wrapper">
-              <div className="admin-gates-table">
-                <div className="admin-gates-table-header">
-                  <div>Gate</div>
-                  <div>Type</div>
-                  <div>Hostel</div>
-                  <div>Location</div>
-                  <div>Radius</div>
-                  <div>Status</div>
-                  <div>Actions</div>
-                </div>
-
-                {gates.map((gate) => (
-                  <div className="admin-gates-table-row" key={gate.id}>
-                    {/* Gate */}
-                    <div className="admin-gate-name">
-                      <strong>{gate.name}</strong>
-                    </div>
-
-                    {/* Type */}
-                    <div className="admin-gate-type">
-                      {gate.type === "HOSTEL" ? "Hostel Gate" : "Main Gate"}
-                    </div>
-
-                    {/* Hostel */}
-                    <div className="admin-gate-hostel">
-                      {gate.type === "HOSTEL" && gate.hostel
-                        ? `${gate.hostel.name} (${gate.hostel.code})`
-                        : "Campus"}
-                    </div>
-
-                    {/* Location */}
-                    <div className="admin-gate-location">
-                      <span>
-                        {gate.latitude}, {gate.longitude}
-                      </span>
-                    </div>
-
-                    {/* Radius */}
-                    <div className="admin-gate-radius">{gate.radius}m</div>
-
-                    {/* Status */}
-                    <div>
-                      <span
-                        className={`gate-status ${
-                          gate.active ? "active" : "inactive"
-                        }`}
-                      >
-                        {gate.active ? "ACTIVE" : "INACTIVE"}
-                      </span>
-                    </div>
-
-                    {/* Actions */}
-                    <div className="admin-gate-actions">
-                      <button type="button" onClick={() => handleEdit(gate)}>
-                        Edit
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => handleToggleStatus(gate)}
-                      >
-                        {gate.active ? "Deactivate" : "Activate"}
-                      </button>
-
-                      <button type="button" onClick={() => handleShowQr(gate)}>
-                        Show QR
-                      </button>
-
-                      <button type="button" onClick={() => handleDelete(gate)}>
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
+            <div className="admin-table-wrapper" style={{ border: "none", borderRadius: 0 }}>
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>Gate Name</th>
+                    <th>Type</th>
+                    <th>Associated Hostel</th>
+                    <th>GPS Coordinates</th>
+                    <th>Geofence</th>
+                    <th>Status</th>
+                    <th style={{ textAlign: "right" }}>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {gates.map((gate) => (
+                    <tr key={gate.id}>
+                      <td>
+                        <span className="admin-table-primary-text">{gate.name}</span>
+                      </td>
+                      <td>
+                        <span className="admin-table-secondary-text">
+                          {gate.type === "HOSTEL" ? "Hostel Gate" : "Campus Main Gate"}
+                        </span>
+                      </td>
+                      <td>
+                        <span className="admin-table-secondary-text">
+                          {gate.type === "HOSTEL" && gate.hostel
+                            ? `${gate.hostel.name} (${gate.hostel.code})`
+                            : "Campus Perimeter"}
+                        </span>
+                      </td>
+                      <td>
+                        <span style={{ fontFamily: "monospace", fontSize: "12px", color: "var(--admin-text-secondary)" }}>
+                          {gate.latitude}, {gate.longitude}
+                        </span>
+                      </td>
+                      <td>
+                        <span className="admin-badge neutral">{gate.radius}m</span>
+                      </td>
+                      <td>
+                        <span
+                          className={`admin-badge ${
+                            gate.active ? "active" : "inactive"
+                          }`}
+                        >
+                          {gate.active ? "ACTIVE" : "INACTIVE"}
+                        </span>
+                      </td>
+                      <td>
+                        <div className="admin-table-actions" style={{ justifyContent: "flex-end" }}>
+                          <button
+                            type="button"
+                            className="admin-btn-action"
+                            onClick={() => handleEdit(gate)}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            type="button"
+                            className="admin-btn-action"
+                            onClick={() => handleToggleStatus(gate)}
+                          >
+                            {gate.active ? "Deactivate" : "Activate"}
+                          </button>
+                          <button
+                            type="button"
+                            className="admin-btn-action primary"
+                            onClick={() => handleShowQr(gate)}
+                          >
+                            QR Code
+                          </button>
+                          <button
+                            type="button"
+                            className="admin-btn-action danger"
+                            onClick={() => handleDelete(gate)}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
-        </section>
-
-        {/* ======================================
-            QR CODE
-        ====================================== */}
-
-        {qrCode && (
-          <section className="history-card admin-qr-card">
-            <div className="section-header">
-              <p className="small-text">Gate QR Code</p>
-
-              <h2>{qrCode.name}</h2>
-            </div>
-
-            <img
-              src={qrCode.image}
-              alt={`${qrCode.name} QR Code`}
-              className="admin-qr-image"
-            />
-
-            <button
-              type="button"
-              className="primary-button"
-              onClick={() => window.print()}
-            >
-              Print QR Code
-            </button>
-
-            <button
-              type="button"
-              className="gate-cancel-button"
-              onClick={() => setQrCode(null)}
-            >
-              Close QR
-            </button>
-          </section>
-        )}
-      </main>
-    </div>
+        </div>
+      </div>
+    </AdminShell>
   );
 };
 

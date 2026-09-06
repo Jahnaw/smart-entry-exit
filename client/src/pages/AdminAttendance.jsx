@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-
 import { useAuth } from "../context/AuthContext";
 import { getAllAttendance } from "../services/api";
+import AdminShell from "../components/AdminShell";
+import "../styles/admin.css";
 
 const AdminAttendance = () => {
   const { token } = useAuth();
@@ -24,8 +25,8 @@ const AdminAttendance = () => {
 
         const data = await getAllAttendance(token);
 
-        setAttendance(data.attendance);
-        setFilteredAttendance(data.attendance);
+        setAttendance(data.attendance || []);
+        setFilteredAttendance(data.attendance || []);
       } catch (error) {
         console.error("Load attendance error:", error);
 
@@ -65,133 +66,152 @@ const AdminAttendance = () => {
   }, [search, actionFilter, dateFilter, attendance]);
 
   return (
-    <div className="dashboard-page">
-      <header className="dashboard-header">
-        <div>
-          <h1>Smart Entry-Exit</h1>
+    <AdminShell
+      title="Attendance Logs"
+      subtitle="Administration / Campus Entry & Exit Audit Trail"
+      portalType="admin"
+    >
+      {error && (
+        <div className="admin-alert-error">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" x2="12" y1="8" y2="12" />
+            <line x1="12" x2="12" y1="16" y2="16.01" />
+          </svg>
+          <span>{error}</span>
+        </div>
+      )}
 
-          <p>Attendance Management</p>
+      {/* ATTENDANCE RECORDS PANEL */}
+      <div className="admin-panel">
+        <div className="admin-panel-header">
+          <div className="admin-panel-title-area">
+            <span className="admin-panel-eyebrow">Audit Records</span>
+            <h3 className="admin-panel-title">
+              Gate Activity Logs ({filteredAttendance.length} records)
+            </h3>
+          </div>
         </div>
 
-        <a href="/admin/dashboard" className="admin-back-link">
-          Dashboard
-        </a>
-      </header>
-
-      <main className="dashboard-content">
-        <section className="history-card">
-          <div className="section-header">
-            <p className="small-text">Attendance Management</p>
-
-            <h2>Entry / Exit Records</h2>
-          </div>
-
+        <div className="admin-panel-body">
           {/* FILTERS */}
-
-          <div className="admin-attendance-filters">
-            <input
-              type="text"
-              placeholder="Search student, roll number, email or gate"
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-            />
+          <div className="admin-filter-bar">
+            <div className="admin-search-input-wrapper">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" x2="21" y1="21" y2="16.65" />
+              </svg>
+              <input
+                className="admin-input"
+                type="text"
+                placeholder="Search student, roll, email or gate location..."
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+              />
+            </div>
 
             <select
+              className="admin-select admin-filter-select"
               value={actionFilter}
               onChange={(event) => setActionFilter(event.target.value)}
             >
               <option value="ALL">All Actions</option>
-
-              <option value="ENTRY">Entry</option>
-
-              <option value="EXIT">Exit</option>
+              <option value="ENTRY">Entry Only</option>
+              <option value="EXIT">Exit Only</option>
             </select>
 
             <input
+              className="admin-input admin-filter-date"
               type="date"
               value={dateFilter}
               onChange={(event) => setDateFilter(event.target.value)}
             />
 
-            <button
-              type="button"
-              className="gate-cancel-button"
-              onClick={() => {
-                setSearch("");
-                setActionFilter("ALL");
-                setDateFilter("");
-              }}
-            >
-              Clear Filters
-            </button>
+            {(search || actionFilter !== "ALL" || dateFilter) && (
+              <button
+                type="button"
+                className="admin-btn-secondary"
+                onClick={() => {
+                  setSearch("");
+                  setActionFilter("ALL");
+                  setDateFilter("");
+                }}
+              >
+                Clear Filters
+              </button>
+            )}
           </div>
 
-          {/* LOADING */}
-
-          {loading && <p className="history-empty">Loading attendance...</p>}
-
-          {/* ERROR */}
-
-          {error && <div className="error-message">{error}</div>}
-
-          {/* NO RESULTS */}
-
-          {!loading && !error && filteredAttendance.length === 0 && (
-            <p className="history-empty">No attendance records found.</p>
-          )}
-
-          {/* ATTENDANCE LIST */}
-
-          {!loading && !error && filteredAttendance.length > 0 && (
-            <div className="admin-attendance-table-wrapper">
-              <div className="admin-attendance-table">
-                <div className="admin-attendance-header">
-                  <div>Student</div>
-                  <div>Status</div>
-                  <div>Gate</div>
-                  <div>Distance</div>
-                  <div>Time</div>
-                </div>
-
-                {filteredAttendance.map((record) => (
-                  <div className="admin-attendance-row" key={record.id}>
-                    <div className="activity-student">
-                      <strong>
-                        {record.student?.name || "Unknown Student"}
-                      </strong>
-
-                      <span>
-                        {record.student?.rollNumber || "Unknown Roll Number"}
-                      </span>
-                    </div>
-
-                    <div>
-                      <span
-                        className={`action-badge ${record.action.toLowerCase()}`}
-                      >
-                        {record.action}
-                      </span>
-                    </div>
-
-                    <div className="activity-gate">
-                      {record.gate?.name || "Unknown Gate"}
-                    </div>
-
-                    <div className="admin-attendance-distance">
-                      {record.distanceFromGate}m
-                    </div>
-
-                    <div className="activity-time">
-                      {new Date(record.timestamp).toLocaleString()}
-                    </div>
-                  </div>
-                ))}
-              </div>
+          {loading && (
+            <div className="admin-empty-state">
+              <p>Loading attendance records...</p>
             </div>
           )}
-        </section>
-      </main>
-    </div>
+
+          {!loading && !error && filteredAttendance.length === 0 && (
+            <div className="admin-empty-state">
+              <p>No attendance records match your filter criteria.</p>
+            </div>
+          )}
+
+          {!loading && !error && filteredAttendance.length > 0 && (
+            <div className="admin-table-wrapper">
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>Student</th>
+                    <th>Action</th>
+                    <th>Gate Point</th>
+                    <th>GPS Proximity</th>
+                    <th>Verification Timestamp</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredAttendance.map((record) => (
+                    <tr key={record.id}>
+                      <td>
+                        <span className="admin-table-primary-text">
+                          {record.student?.name || "Unknown Student"}
+                        </span>
+                        <span className="admin-table-secondary-text">
+                          Roll: {record.student?.rollNumber || "N/A"}
+                        </span>
+                      </td>
+                      <td>
+                        <span
+                          className={`admin-badge ${
+                            record.action === "ENTRY" ? "entry" : "exit"
+                          }`}
+                        >
+                          {record.action}
+                        </span>
+                      </td>
+                      <td>
+                        <span className="admin-table-primary-text">
+                          {record.gate?.name || "Campus Gate"}
+                        </span>
+                      </td>
+                      <td>
+                        <span className="admin-badge neutral">
+                          {record.distanceFromGate !== undefined
+                            ? `${Math.round(record.distanceFromGate)}m`
+                            : "Verified"}
+                        </span>
+                      </td>
+                      <td>
+                        <span className="admin-table-secondary-text">
+                          {new Date(record.timestamp).toLocaleString()}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </div>
+    </AdminShell>
   );
 };
 
