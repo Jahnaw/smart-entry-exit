@@ -755,6 +755,7 @@ img {
 }
 
 .scanner-container {
+  position: relative;
   isolation: isolate;
   max-width: 560px;
   aspect-ratio: 4 / 3;
